@@ -1,0 +1,13 @@
+{
+    "gethPort": 8545,
+    "gethAddr": "http://localhost",
+    "blocks": [
+        {
+            "start": 45000,
+            "end": "latest"
+        }
+    ],
+    "quiet": false,
+    "terminateAtExistingDB": true,
+    "listenOnly": true
+}
