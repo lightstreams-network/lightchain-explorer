@@ -7,6 +7,8 @@
   "license": "MIT",
   "scripts": {
     "start": "concurrently \"node tools/sync.js \" \"node app.js\" ",
+    "sync": "node tools/sync.js",
+    "app": "node app.js",
     "pretest": "copyfiles app.js app/  ",
     "test": "mocha --exit"
   },
