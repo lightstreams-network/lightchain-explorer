@@ -51,12 +51,7 @@ if (web3.version.node.split('/')[0].toLowerCase().includes('parity')) {
   web3 = require("../lib/trace.js")(web3);
 }
 
-var newBlocks = web3.eth.filter("latest");
-var newTxs = web3.eth.filter("pending");
-
 exports.data = function(req, res){
-  console.log(req.body)
-
   if ("tx" in req.body) {
     web3getTx({
       txHash: req.body.tx.toLowerCase()
@@ -83,8 +78,8 @@ exports.data = function(req, res){
     }
     web3getBlock({blockNumOrHash}, req);
   } else if ("action" in req.body) {
-    if (req.body.action === 'hashrate') {
-      web3getHashRate({}, res)
+    if (req.body.action === 'blockrate') {
+      web3getBlockrate({}, res)
     } else {
       console.error("Invalid Request: " + action)
       res.status(400).send();
@@ -207,7 +202,7 @@ var web3getBlock = function({ blockNumOrHash }, res) {
   });
 }
 
-var web3getHashRate = function({ }, res) {
+var web3getBlockrate = function({ }, res) {
   web3.eth.getBlock('latest', function(err, latest) {
     if (err || !latest) {
       console.error("StatsWeb3 error :" + err);
@@ -223,20 +218,15 @@ var web3getHashRate = function({ }, res) {
         if (err || !block) {
           console.error("StatsWeb3 error :" + err);
           res.write(JSON.stringify({
-            "blockHeight": latest.number,
-            "difficulty": latest.difficulty,
             "blockTime": 0,
             "hashrate": 0
           }));
         } else {
           console.log("StatsWeb3: check block: " + block.number);
           var blocktime = (latest.timestamp - block.timestamp) / nblock;
-          var hashrate = latest.difficulty / blocktime;
           res.write(JSON.stringify({
             "blockHeight": latest.number,
-            "difficulty": latest.difficulty,
             "blockTime": blocktime,
-            "hashrate": hashrate
           }));
         }
         res.end();

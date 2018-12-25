@@ -8,7 +8,7 @@ var async = require('async');
 
 module.exports = function(app){
   var web3relay = require('./web3relay');
-
+  var consensus = require('./consensus');
   var Token = require('./token');
 
   /*
@@ -25,6 +25,7 @@ module.exports = function(app){
 
   app.post('/tokenrelay', Token);
   app.post('/web3relay', web3relay.data);
+  app.post('/consensus', consensus.route);
 }
 
 var getAddr = function(req, res){

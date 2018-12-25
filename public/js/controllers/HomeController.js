@@ -62,14 +62,20 @@ angular.module('BlocksApp')
         scope.stats.usdPht = 0.15;
 
         scope.refreshStats = function() {
-          $http.post("/web3relay", { "action": "hashrate" })
+          $http.post("/web3relay", { "action": "blockrate" })
             .then(function(res) {
-              console.log(res.data);
-              scope.stats.hashrate = res.data.hashrate;
-              scope.stats.difficulty = res.data.difficulty;
+              console.log('blockrate', res.data);
+              // scope.stats.hashrate = res.data.hashrate;
+              // scope.stats.difficulty = res.data.difficulty;
               scope.stats.blockHeight = res.data.blockHeight;
               scope.stats.blockTime = res.data.blockTime;
             });
+          $http.post("/consensus", { "action": "status" })
+            .then(function(res) {
+              console.log('Consensus', res.data);
+              scope.stats.onlinevalidators = _.size(res.data.active_validators);
+              scope.stats.totalvalidators = _.size(res.data.validators);
+            })
         }
 
         scope.refreshStats();
