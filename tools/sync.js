@@ -4,48 +4,70 @@ Version: .0.0.2
 This file will start syncing the blockchain from the node address you provide in the conf.json file.
 Please read the README in the root directory that explains the parameters of this code
 */
-require( '../db.js' );
+require('../db.js');
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
 var _ = require('lodash');
 
 var async = require('async');
-var Web3 = require('web3');
 
-var mongoose        = require( 'mongoose' );
-var Block           = mongoose.model( 'Block' );
-var Transaction     = mongoose.model( 'Transaction' );
-var Account         = mongoose.model( 'Account' );
+var mongoose = require('mongoose');
+var Block = mongoose.model('Block');
+var Transaction = mongoose.model('Transaction');
+var Account = mongoose.model('Account');
+
+var web3 = require('../lib/web3')();
+var consensus = require('../lib/consensus')();
+
+if (web3.isConnected())
+  console.log("Web3 connection established");
+else
+  throw "No connection, please specify web3host in conf.json";
+
+if (consensus.isConnected())
+  console.log("Consensus connection established");
+else
+  throw "No connection, please specify consensus in conf.json";
 
 /**
-  //Just listen for latest blocks and sync from the start of the app.
-**/
+ //Just listen for latest blocks and sync from the start of the app.
+ **/
 var listenBlocks = function(config) {
   if (web3.eth.syncing) {
     console.log('Info: waiting until syncing finished... (currentBlock is #' + web3.eth.syncing.currentBlock + ')');
-    setTimeout(function() { listenBlocks(config); }, 10000);
+    setTimeout(function() {
+      listenBlocks(config);
+    }, 10000);
     return;
   }
-    var newBlocks = web3.eth.filter("latest");
-    newBlocks.watch(function (error,latestBlock) {
-    if(error) {
-        console.log('Error: ' + error);
+  var newBlocks = web3.eth.filter("latest");
+  newBlocks.watch(function(error, latestBlock) {
+    if (error) {
+      console.log('Error: ' + error);
     } else if (latestBlock == null) {
-        console.log('Warning: null block hash');
+      console.log('Warning: null block hash');
     } else {
       console.log('Found new block: ' + latestBlock);
-      if(web3.isConnected()) {
-        web3.eth.getBlock(latestBlock, true, function(error,blockData) {
-          if(error) {
-            console.log('Warning: error on getting block with hash/number: ' +   latestBlock + ': ' + error);
-          }else if(blockData == null) {
+      if (web3.isConnected()) {
+        web3.eth.getBlock(latestBlock, true, async (error, blockData) => {
+          await consensus.getBlockStatus(blockData.height)
+            .then(resp => {
+              _.extend(blockData, resp)
+            })
+            .catch(err => {
+              console.error(err);
+            })
+
+          if (error) {
+            console.log('Warning: error on getting block with hash/number: ' + latestBlock + ': ' + error);
+          } else if (blockData == null) {
             console.log('Warning: null block data received from the block with hash/number: ' + latestBlock);
-          }else{
+          } else {
             writeBlockToDB(config, blockData, true);
             writeTransactionsToDB(config, blockData, true);
           }
         });
-      }else{
+      } else {
         console.log('Error: Web3 connection time out trying to get block ' + latestBlock + ' retrying connection now');
         listenBlocks(config);
       }
@@ -53,19 +75,21 @@ var listenBlocks = function(config) {
   });
 }
 /**
-  If full sync is checked this function will start syncing the block chain from lastSynced param see README
-**/
-var syncChain = function(config, nextBlock){
-  if(web3.isConnected()) {
+ If full sync is checked this function will start syncing the block chain from lastSynced param see README
+ **/
+var syncChain = function(config, nextBlock) {
+  if (web3.isConnected()) {
     if (web3.eth.syncing) {
       console.log('Info: waiting until syncing finished... (currentBlock is #' + web3.eth.syncing.currentBlock + ')');
-      setTimeout(function() { syncChain(config, nextBlock); }, 10000);
+      setTimeout(function() {
+        syncChain(config, nextBlock);
+      }, 10000);
       return;
     }
 
     if (typeof nextBlock === 'undefined') {
       prepareSync(config, function(error, startBlock) {
-        if(error) {
+        if (error) {
           console.log('ERROR: error: ' + error);
           return;
         }
@@ -74,25 +98,25 @@ var syncChain = function(config, nextBlock){
       return;
     }
 
-    if( nextBlock == null ) {
+    if (nextBlock == null) {
       console.log('nextBlock is null');
       return;
-    } else if( nextBlock < config.startBlock ) {
+    } else if (nextBlock < config.startBlock) {
       writeBlockToDB(config, null, true);
       writeTransactionsToDB(config, null, true);
-      console.log('*** Sync Finsihed ***');
+      console.log('*** Sync Finished ***');
       config.syncAll = false;
       return;
     }
 
     var count = config.bulkSize;
-    while(nextBlock >= config.startBlock && count > 0) {
-      web3.eth.getBlock(nextBlock, true, function(error,blockData) {
-        if(error) {
+    while ( nextBlock >= config.startBlock && count > 0 ) {
+      web3.eth.getBlock(nextBlock, true, function(error, blockData) {
+        if (error) {
           console.log('Warning: error on getting block with hash/number: ' + nextBlock + ': ' + error);
-        }else if(blockData == null) {
+        } else if (blockData == null) {
           console.log('Warning: null block data received from the block with hash/number: ' + nextBlock);
-        }else{
+        } else {
           writeBlockToDB(config, blockData);
           writeTransactionsToDB(config, blockData);
         }
@@ -101,49 +125,53 @@ var syncChain = function(config, nextBlock){
       count--;
     }
 
-    setTimeout(function() { syncChain(config, nextBlock); }, 500);
-  }else{
+    setTimeout(function() {
+      syncChain(config, nextBlock);
+    }, 500);
+  } else {
     console.log('Error: Web3 connection time out trying to get block ' + nextBlock + ' retrying connection now');
     syncChain(config, nextBlock);
   }
 }
 /**
-  Write the whole block object to DB
-**/
+ Write the whole block object to DB
+ **/
 var writeBlockToDB = function(config, blockData, flush) {
   var self = writeBlockToDB;
   if (!self.bulkOps) {
     self.bulkOps = [];
   }
+
   if (blockData && blockData.number >= 0) {
     self.bulkOps.push(new Block(blockData));
     console.log('\t- block #' + blockData.number.toString() + ' inserted.');
   }
 
-  if(flush && self.bulkOps.length > 0 || self.bulkOps.length >= config.bulkSize) {
+  if (flush && self.bulkOps.length > 0 || self.bulkOps.length >= config.bulkSize) {
     var bulk = self.bulkOps;
     self.bulkOps = [];
-    if(bulk.length == 0) return;
+    if (bulk.length == 0) return;
 
-    Block.collection.insert(bulk, function( err, blocks ){
-      if ( typeof err !== 'undefined' && err ) {
+    Block.collection.insert(bulk, function(err, blocks) {
+      if (typeof err !== 'undefined' && err) {
         if (err.code == 11000) {
-          if(!('quiet' in config && config.quiet === true)) {
-            console.log('Skip: Duplicate DB key : ' +err);
+          if (!('quiet' in config && config.quiet === true)) {
+            console.log('Skip: Duplicate DB key : ' + err);
           }
-        }else{
+        } else {
           console.log('Error: Aborted due to error on DB: ' + err);
           process.exit(9);
         }
-      }else{
+      } else {
         console.log('* ' + blocks.insertedCount + ' blocks successfully written.');
       }
     });
   }
 }
+
 /**
-  Break transactions out of blocks and write to DB
-**/
+ Break transactions out of blocks and write to DB
+ **/
 var writeTransactionsToDB = function(config, blockData, flush) {
   var self = writeTransactionsToDB;
   if (!self.bulkOps) {
@@ -158,7 +186,7 @@ var writeTransactionsToDB = function(config, blockData, flush) {
     self.miners.push({ address: blockData.miner, blockNumber: blockData.number, type: 0 });
   }
   if (blockData && blockData.transactions.length > 0) {
-    for (d in blockData.transactions) {
+    for ( d in blockData.transactions ) {
       var txData = blockData.transactions[d];
       txData.timestamp = blockData.timestamp;
       txData.value = etherUnits.toEther(new BigNumber(txData.value), 'wei');
@@ -197,7 +225,7 @@ var writeTransactionsToDB = function(config, blockData, flush) {
     if (config.useRichList && accounts.length > 0) {
       var n = 0;
       var chunks = [];
-      while (accounts.length > 800) {
+      while ( accounts.length > 800 ) {
         var chunk = accounts.splice(0, 500);
         chunks.push(chunk);
       }
@@ -210,7 +238,7 @@ var writeTransactionsToDB = function(config, blockData, flush) {
           function(callback) {
             var batch = web3.createBatch();
 
-            for (var i = 0; i < chunk.length; i++) {
+            for ( var i = 0; i < chunk.length; i++ ) {
               var account = chunk[i];
               batch.add(web3.eth.getCode.request(account));
             }
@@ -222,9 +250,9 @@ var writeTransactionsToDB = function(config, blockData, flush) {
                 return;
               }
               results = results || [];
-              batch.requests.map(function (request, index) {
+              batch.requests.map(function(request, index) {
                 return results[index] || {};
-              }).forEach(function (result, i) {
+              }).forEach(function(result, i) {
                 var code = batch.requests[i].format ? batch.requests[i].format(result.result) : result.result;
                 if (code.length > 2) {
                   data[batch.requests[i].params[0]].type = 1; // contract type
@@ -236,7 +264,7 @@ var writeTransactionsToDB = function(config, blockData, flush) {
           }, function(callback) {
             // batch rpc job
             var batch = web3.createBatch();
-            for (var i = 0; i < chunk.length; i++) {
+            for ( var i = 0; i < chunk.length; i++ ) {
               var account = chunk[i];
               if (account) {
                 batch.add(web3.eth.getBalance.request(account));
@@ -250,9 +278,9 @@ var writeTransactionsToDB = function(config, blockData, flush) {
                 return;
               }
               results = results || [];
-              batch.requests.map(function (request, index) {
+              batch.requests.map(function(request, index) {
                 return results[index] || {};
-              }).forEach(function (result, i) {
+              }).forEach(function(result, i) {
                 var balance = batch.requests[i].format ? batch.requests[i].format(result.result) : result.result;
 
                 let ether;
@@ -282,39 +310,39 @@ var writeTransactionsToDB = function(config, blockData, flush) {
     }
 
     if (bulk.length > 0)
-    Transaction.collection.insert(bulk, function( err, tx ){
-      if ( typeof err !== 'undefined' && err ) {
-        if (err.code == 11000) {
-          if(!('quiet' in config && config.quiet === true)) {
-            console.log('Skip: Duplicate transaction key ' + err);
+      Transaction.collection.insert(bulk, function(err, tx) {
+        if (typeof err !== 'undefined' && err) {
+          if (err.code == 11000) {
+            if (!('quiet' in config && config.quiet === true)) {
+              console.log('Skip: Duplicate transaction key ' + err);
+            }
+          } else {
+            console.log('Error: Aborted due to error on Transaction: ' + err);
+            process.exit(9);
           }
-        }else{
-          console.log('Error: Aborted due to error on Transaction: ' + err);
-          process.exit(9);
+        } else {
+          console.log('* ' + tx.insertedCount + ' transactions successfully recorded.');
         }
-      }else{
-        console.log('* ' + tx.insertedCount + ' transactions successfully recorded.');
-      }
-    });
+      });
   }
 }
 /**
-  //check oldest block or starting block then callback
-**/
+ //check oldest block or starting block then callback
+ **/
 var prepareSync = function(config, callback) {
   var blockNumber = null;
   var oldBlockFind = Block.find({}, "number").lean(true).sort('number').limit(1);
-  oldBlockFind.exec(function (err, docs) {
-    if(err || !docs || docs.length < 1) {
+  oldBlockFind.exec(function(err, docs) {
+    if (err || !docs || docs.length < 1) {
       // not found in db. sync from config.endBlock or 'latest'
-      if(web3.isConnected()) {
+      if (web3.isConnected()) {
         var currentBlock = web3.eth.blockNumber;
         var latestBlock = config.endBlock || currentBlock || 'latest';
-        if(latestBlock === 'latest') {
+        if (latestBlock === 'latest') {
           web3.eth.getBlock(latestBlock, true, function(error, blockData) {
-            if(error) {
-              console.log('Warning: error on getting block with hash/number: ' +   latestBlock + ': ' + error);
-            } else if(blockData == null) {
+            if (error) {
+              console.log('Warning: error on getting block with hash/number: ' + latestBlock + ': ' + error);
+            } else if (blockData == null) {
               console.log('Warning: null block data received from the block with hash/number: ' + latestBlock);
             } else {
               console.log('Starting block number = ' + blockData.number);
@@ -331,7 +359,7 @@ var prepareSync = function(config, callback) {
         console.log('Error: Web3 connection error');
         callback(err, null);
       }
-    }else{
+    } else {
       blockNumber = docs[0].number - 1;
       console.log('Old block found. Starting block number = ' + blockNumber);
       callback(null, blockNumber);
@@ -339,20 +367,22 @@ var prepareSync = function(config, callback) {
   });
 }
 /**
-  Block Patcher(experimental)
-**/
+ Block Patcher(experimental)
+ **/
 var runPatcher = function(config, startBlock, endBlock) {
-  if(!web3 || !web3.isConnected()) {
+  if (!web3 || !web3.isConnected()) {
     console.log('Error: Web3 is not connected. Retrying connection shortly...');
-    setTimeout(function() { runPatcher(config); }, 3000);
+    setTimeout(function() {
+      runPatcher(config);
+    }, 3000);
     return;
   }
 
-  if(typeof startBlock === 'undefined' || typeof endBlock === 'undefined') {
+  if (typeof startBlock === 'undefined' || typeof endBlock === 'undefined') {
     // get the last saved block
     var blockFind = Block.find({}, "number").lean(true).sort('-number').limit(1);
-    blockFind.exec(function (err, docs) {
-      if(err || !docs || docs.length < 1) {
+    blockFind.exec(function(err, docs) {
+      if (err || !docs || docs.length < 1) {
         // no blocks found. terminate runPatcher()
         console.log('No need to patch blocks.');
         return;
@@ -370,14 +400,14 @@ var runPatcher = function(config, startBlock, endBlock) {
     console.log('Patching from #' + startBlock + ' to #' + endBlock);
     var patchBlock = startBlock;
     var count = 0;
-    while(count < config.patchBlocks && patchBlock <= endBlock) {
-      if(!('quiet' in config && config.quiet === true)) {
+    while ( count < config.patchBlocks && patchBlock <= endBlock ) {
+      if (!('quiet' in config && config.quiet === true)) {
         console.log('Patching Block: ' + patchBlock)
       }
       web3.eth.getBlock(patchBlock, true, function(error, patchData) {
-        if(error) {
+        if (error) {
           console.log('Warning: error on getting block with hash/number: ' + patchBlock + ': ' + error);
-        } else if(patchData == null) {
+        } else if (patchData == null) {
           console.log('Warning: null block data received from the block with hash/number: ' + patchBlock);
         } else {
           checkBlockDBExistsThenWrite(config, patchData)
@@ -390,7 +420,9 @@ var runPatcher = function(config, startBlock, endBlock) {
     writeBlockToDB(config, null, true);
     writeTransactionsToDB(config, null, true);
 
-    setTimeout(function() { runPatcher(config, patchBlock, endBlock); }, 1000);
+    setTimeout(function() {
+      runPatcher(config, patchBlock, endBlock);
+    }, 1000);
   } else {
     // flush
     writeBlockToDB(config, null, true);
@@ -400,21 +432,21 @@ var runPatcher = function(config, startBlock, endBlock) {
   }
 }
 /**
-  This will be used for the patcher(experimental)
-**/
+ This will be used for the patcher(experimental)
+ **/
 var checkBlockDBExistsThenWrite = function(config, patchData, flush) {
-  Block.find({number: patchData.number}, function (err, b) {
-    if (!b.length){
+  Block.find({ number: patchData.number }, function(err, b) {
+    if (!b.length) {
       writeBlockToDB(config, patchData, flush);
       writeTransactionsToDB(config, patchData, flush);
-    }else if(!('quiet' in config && config.quiet === true)) {
-      console.log('Block number: ' +patchData.number.toString() + ' already exists in DB.');
+    } else if (!('quiet' in config && config.quiet === true)) {
+      console.log('Block number: ' + patchData.number.toString() + ' already exists in DB.');
     }
   });
 };
 /**
-  Start config for node connection and sync
-**/
+ Start config for node connection and sync
+ **/
 /**
  * nodeAddr: node address
  * gethPort: geth port
@@ -423,27 +455,22 @@ var checkBlockDBExistsThenWrite = function(config, patchData, flush) {
 // load config.json
 var config = { nodeAddr: 'localhost', gethPort: 8545, bulkSize: 100 };
 try {
+  var local = require('../config.json');
+  _.extend(config, local);
+  console.log('config.json found.');
+} catch ( error ) {
+  if (error.code === 'MODULE_NOT_FOUND') {
     var local = require('../config.json');
     _.extend(config, local);
-    console.log('config.json found.');
-} catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
-        var local = require('../config.json');
-        _.extend(config, local);
-        console.log('No config file found. Using default configuration... (config.example.json)');
-    } else {
-        throw error;
-        process.exit(1);
-    }
+    console.log('No config file found. Using default configuration... (config.example.json)');
+  } else {
+    throw error;
+    process.exit(1);
+  }
 }
 
-console.log('Connecting ' + config.nodeAddr + ':' + config.gethPort + '...');
-
-// Sets address for RPC WEB3 to connect to, usually your node IP address defaults ot localhost
-var web3 = new Web3(new Web3.providers.HttpProvider('http://' + config.nodeAddr + ':' + config.gethPort.toString()));
-
 // patch missing blocks
-if (config.patch === true){
+if (config.patch === true) {
   console.log('Checking for missing blocks');
   runPatcher(config);
 }
@@ -458,7 +485,7 @@ if (process.env.NORICHLIST) {
 listenBlocks(config);
 
 // Starts full sync when set to true in config
-if (config.syncAll === true){
+if (config.syncAll === true) {
   console.log('Starting Full Sync');
   syncChain(config);
 }

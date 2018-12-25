@@ -36,7 +36,7 @@ var getAddr = function(req, res){
   var limit = parseInt(req.body.length);
   var start = parseInt(req.body.start);
 
-  var data = { draw: parseInt(req.body.draw), recordsFiltered: count, recordsTotal: count, mined: 0 };
+  var data = { draw: parseInt(req.body.draw), recordsFiltered: count, recordsTotal: count };
 
   var addrFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] })  
 
@@ -64,7 +64,7 @@ var getAddr = function(req, res){
 var getAddrCounter = function(req, res) {
   var addr = req.body.addr.toLowerCase();
   var count = parseInt(req.body.count);
-  var data = { recordsFiltered: count, recordsTotal: count, mined: 0 };
+  var data = { recordsFiltered: count, recordsTotal: count };
 
   async.waterfall([
   function(callback) {
@@ -74,15 +74,6 @@ var getAddrCounter = function(req, res) {
       // fix recordsTotal
       data.recordsTotal = count;
       data.recordsFiltered = count;
-    }
-    callback(null);
-  });
-
-  }, function(callback) {
-
-  Block.count({ "miner": addr }, function(err, count) {
-    if (!err && count) {
-      data.mined = count;
     }
     callback(null);
   });
@@ -171,7 +162,7 @@ var getLatest = function(lim, res, callback) {
 
 /* get blocks from db */
 var sendBlocks = function(lim, res) {
-  var blockFind = Block.find({}, "number timestamp miner extraData")
+  var blockFind = Block.find({}, "number timestamp miner extraData proposer validators")
                       .lean(true).sort('-number').limit(lim);
   blockFind.exec(function (err, docs) {
     if(!err && docs) {

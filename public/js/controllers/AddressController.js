@@ -5,7 +5,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
 
     $rootScope.$state.current.data["pageSubTitle"] = $stateParams.hash;
     $scope.addrHash = $stateParams.hash;
-    $scope.addr = {"balance": 0, "count": 0, "mined": 0};
+    $scope.addr = {"balance": 0, "count": 0};
     $scope.settings = $rootScope.setup;
 
     //fetch web3 stuff
@@ -56,7 +56,6 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
 
           $http.post('/addr_count', data).then(function(resp) {
             $scope.addr.count = resp.data.recordsTotal;
-            $scope.addr.mined = parseInt(resp.data.mined);
 
             data.count = resp.data.recordsTotal;
 

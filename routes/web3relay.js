@@ -4,52 +4,20 @@
     Endpoint for client to talk to etc node
 */
 
-var Web3 = require("web3");
-var web3;
 
 var _ = require('lodash');
 var BigNumber = require('bignumber.js');
-var etherUnits = require(__lib + "etherUnits.js")
+var etherUnits = require(__lib + "etherUnits.js");
 
-var getLatestBlocks = require('./index').getLatestBlocks;
 var filterBlocks = require('./filters').filterBlocks;
 var filterTrace = require('./filters').filterTrace;
 
-/*Start config for node connection and sync*/
-// load config.json
-var config = { nodeAddr: 'localhost', gethPort: 8545 };
-try {
-    var local = require('../config.json');
-    _.extend(config, local);
-    console.log('config.json found.');
-} catch (error) {
-    if (error.code === 'MODULE_NOT_FOUND') {
-        var local = require('../config.json');
-        _.extend(config, local);
-        console.log('No config file found. Using default configuration... (config.example.json)');
-    } else {
-        throw error;
-        process.exit(1);
-    }
-}
-
-//Create Web3 connection
-console.log('Connecting ' + config.nodeAddr + ':' + config.gethPort + '...');
-if (typeof web3 !== "undefined") {
-  web3 = new Web3(web3.currentProvider);
-} else {
-  web3 = new Web3(new Web3.providers.HttpProvider('http://'+config.nodeAddr+':'+config.gethPort));
-}
+var web3 = require('../lib/web3')();
 
 if (web3.isConnected())
   console.log("Web3 connection established");
 else
   throw "No connection, please specify web3host in conf.json";
-
-if (web3.version.node.split('/')[0].toLowerCase().includes('parity')) {
-  // parity extension
-  web3 = require("../lib/trace.js")(web3);
-}
 
 exports.data = function(req, res){
   if ("tx" in req.body) {
@@ -76,7 +44,7 @@ exports.data = function(req, res){
     } else {
         blockNumOrHash = parseInt(req.body.block);
     }
-    web3getBlock({blockNumOrHash}, req);
+    web3getBlock({blockNumOrHash}, res);
   } else if ("action" in req.body) {
     if (req.body.action === 'blockrate') {
       web3getBlockrate({}, res)

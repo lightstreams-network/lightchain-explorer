@@ -13,7 +13,7 @@ var Block = new Schema(
     "transactionsRoot": String,
     "stateRoot": String,
     "receiptRoot": String,
-    "miner": String,
+    "proposer": String,
     "difficulty": String,
     "totalDifficulty": String,
     "size": Number,
@@ -22,7 +22,7 @@ var Block = new Schema(
     "gasUsed": Number,
     "timestamp": Number,
     "blockTime": Number,
-    "uncles": [String]
+    "validators": [String]
 });
 
 var Account = new Schema(

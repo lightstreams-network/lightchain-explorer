@@ -2,11 +2,17 @@ require( '../db.js' );
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
 
-var Web3 = require('web3');
-
 var mongoose        = require( 'mongoose' );
 var Block           = mongoose.model( 'Block' );
 var Transaction     = mongoose.model( 'Transaction' );
+
+var web3 = require('../lib/web3')();
+
+if (web3.isConnected())
+  console.log("Web3 connection established");
+else
+  throw "No connection, please specify web3host in conf.json";
+
 
 var grabBlock = function(config, web3, blockHashOrNumber) {
     var desiredBlockHashOrNumber;
@@ -162,8 +168,5 @@ try {
         process.exit(1);
     }
 }
-
-console.log('Connecting ' + config.nodeAddr + ':' + config.gethPort + '...');
-var web3 = new Web3(new Web3.providers.HttpProvider('http://' + config.nodeAddr + ':' + config.gethPort.toString()));
 
 patchBlocks(config);
