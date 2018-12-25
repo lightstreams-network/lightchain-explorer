@@ -9,34 +9,22 @@ var async = require('async');
 module.exports = function(app){
   var web3relay = require('./web3relay');
 
-  var DAO = require('./dao');
   var Token = require('./token');
 
-  var compile = require('./compiler');
-  var fiat = require('./fiat');
-  var stats = require('./stats');
-  var richList = require('./richlist');
-
-  /* 
+  /*
     Local DB: data request format
     { "address": "0x1234blah", "txin": true } 
     { "tx": "0x1234blah" }
     { "block": "1234" }
   */
-  app.post('/richlist', richList);
   app.post('/addr', getAddr);
   app.post('/addr_count', getAddrCounter);
   app.post('/tx', getTx);
   app.post('/block', getBlock);
   app.post('/data', getData);
 
-  app.post('/daorelay', DAO);
-  app.post('/tokenrelay', Token);  
+  app.post('/tokenrelay', Token);
   app.post('/web3relay', web3relay.data);
-  app.post('/compile', compile);
-
-  app.post('/fiat', fiat);
-  app.post('/stats', stats);
 }
 
 var getAddr = function(req, res){

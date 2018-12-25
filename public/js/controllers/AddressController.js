@@ -118,22 +118,4 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
       });      
     }
     
-})
-.directive('contractSource', function($http) {
-  return {
-    restrict: 'E',
-    templateUrl: '/views/contract-source.html',
-    scope: false,
-    link: function(scope, elem, attrs){
-        //fetch contract stuff
-        $http({
-          method: 'POST',
-          url: '/compile',
-          data: {"addr": scope.addrHash, "action": "find"}
-        }).then(function(resp) {
-          console.log(resp.data);
-          scope.contract = resp.data;
-        });
-      }
-  }
-})
+});

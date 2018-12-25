@@ -178,24 +178,6 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
             }
         })
 
-        .state('uncle', {
-            url: "/uncle/*number",
-            templateUrl: "views/block.html",
-            data: {pageTitle: 'Uncle'},
-            controller: "UncleController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        name: 'BlocksApp',
-                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
-                        files: [
-                             '/js/controllers/UncleController.js'
-                        ]
-                    });
-                }]
-            }
-        })
-
         .state('tx', {
             url: "/tx/{hash}",
             templateUrl: "views/tx.html",
@@ -208,43 +190,6 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
                         insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
                         files: [
                              '/js/controllers/TxController.js'
-                        ]
-                    });
-                }]
-            }
-        })
-        .state('contract', {
-            url: "/contract/{addr}",
-            templateUrl: "views/contract.html",
-            data: {pageTitle: 'Verify Contract'},
-            controller: "ContractController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        name: 'BlocksApp',
-                        insertBefore: '#ng_load_plugins_before', 
-                        files: [
-                             '/js/controllers/ContractController.js',
-                             '/js/custom.js'
-                         ]
-                     });
-                }]
-            }
-        })
-        .state('stats', {
-            url: "/stats/{chart}",
-            templateUrl: "views/stats/index.html",
-            data: {pageTitle: 'Statistics'},
-            controller: "StatsController",
-            resolve: {
-                deps: ['$ocLazyLoad', '$stateParams', function($ocLazyLoad, $stateParams) {
-                    return $ocLazyLoad.load({
-                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
-                        files: [
-                             '/js/controllers/StatsController.js',
-                             '/css/stats.css',
-                             "/plugins/async.min.js",
-                             "/plugins/moment/moment.min.js"
                         ]
                     });
                 }]
@@ -279,23 +224,6 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
                         insertBefore: '#ng_load_plugins_before', 
                         files: [
                              '/js/controllers/TokenController.js'
-                        ]
-                    });
-                }]
-            }
-        })
-        .state('dao', {
-            url: "/dao",
-            templateUrl: "views/dao.html",
-            data: {pageTitle: 'theDAO'},
-            controller: "DAOController",
-            resolve: {
-                deps: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        name: 'BlocksApp',
-                        insertBefore: '#ng_load_plugins_before', 
-                        files: [
-                             '/js/controllers/DAOController.js'
                         ]
                     });
                 }]

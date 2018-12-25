@@ -1,5 +1,6 @@
 var mongoose = require( 'mongoose' );
 var Schema   = mongoose.Schema;
+var DBName  = 'blockDB';
 
 var Block = new Schema(
 {
@@ -96,7 +97,7 @@ module.exports.Transaction = mongoose.model('Transaction');
 module.exports.Account = mongoose.model('Account');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/blockDB', {
+mongoose.connect(process.env.MONGO_URI || `mongodb://localhost/${DBName}`, {
   useMongoClient: true
 });
 

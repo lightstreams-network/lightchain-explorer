@@ -14,7 +14,7 @@ try {
 } catch(e) {
   if (e.code == 'MODULE_NOT_FOUND') {
     console.log('No config file found. Using default configuration... (config.example.json)');
-    config = require('./config.example.json');
+    config = require('./config.json');
   } else {
     throw e;
     process.exit(1);

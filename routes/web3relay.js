@@ -24,7 +24,7 @@ try {
     console.log('config.json found.');
 } catch (error) {
     if (error.code === 'MODULE_NOT_FOUND') {
-        var local = require('../config.example.json');
+        var local = require('../config.json');
         _.extend(config, local);
         console.log('No config file found. Using default configuration... (config.example.json)');
     } else {
