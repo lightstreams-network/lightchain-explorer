@@ -39,7 +39,7 @@
                 <div class="number">
                     <h3>
                         <span data-counter="counterup" data-value="stats.validatorsrate">
-                            {{stats.onlinevalidators}} / {{stats.totalvalidators}}
+                            {{stats.onlinevalidators | number: 0}} / {{stats.totalvalidators | number: 0}}
                         </span>
                     </h3>
                     <small>Active Validators</small>
