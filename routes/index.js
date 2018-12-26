@@ -166,6 +166,14 @@ var sendBlocks = function(lim, res) {
                       .lean(true).sort('-number').limit(lim);
   blockFind.exec(function (err, docs) {
     if(!err && docs) {
+      var block = docs[docs.length - 1];
+      if (_.isUndefined(block)) {
+        console.log("block not found");
+        res.write(JSON.stringify({ "error": true }));
+        res.end();
+        return
+      }
+
       var blockNumber = docs[docs.length - 1].number;
       // aggregate transaction counters
       Transaction.aggregate([
