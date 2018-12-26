@@ -1,7 +1,7 @@
 {
     "nodeAddr":     "localhost",
     "gethPort":     8545,
-    "tendermintAddr": "https://localhost:26657",
+    "tendermintAddr": "127.0.0.1:26657",
     "startBlock":   0,
     "quiet":        false,
     "syncAll":      true,
