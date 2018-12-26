@@ -17,7 +17,6 @@ angular.module('BlocksApp')
       url: '/consensus',
       data: { "action": "validator", "address": $scope.address }
     }).then(function(resp) {
-      debugger;
       if (resp.data.error) {
         $location.path("/err404/validator/" + $scope.address);
         return;

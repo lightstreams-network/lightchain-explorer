@@ -3,7 +3,7 @@ var mongoose = require( 'mongoose' );
 var Block     = mongoose.model( 'Block' );
 var Transaction = mongoose.model( 'Transaction' );
 var filters = require('./filters');
-
+var _ = require('lodash');
 var async = require('async');
 
 module.exports = function(app){

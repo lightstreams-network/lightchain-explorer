@@ -4,11 +4,15 @@ require( './db' );
 
 var express = require('express');
 var path = require('path');
+var _ = require('lodash');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+var Web3 = require('./lib/web3');
+var Consensus = require('./lib/consensus');
 
 var config = {};
+
 try {
   config = require('./config.json');
 } catch(e) {
@@ -38,7 +42,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 global.__lib = __dirname + '/lib/';
 
 
-// client
+app.use(async function(req, res, next) {
+  var web3 = Web3();
+  var consensus = Consensus();
+  if (!_.isUndefined(web3) && !web3.isConnected()) {
+    res.status(403);
+    res.render('error', {
+      message: 'Web3 is not connected',
+      error: {}
+    });
+  } else if (!await consensus.isConnected()) {
+    res.status(403);
+    res.render('error', {
+      message: 'Tendermint is not connected',
+      error: {}
+    });
+  } else {
+    next();
+  }
+});
 
 app.get('/', function(req, res) {
   res.render('index', config);

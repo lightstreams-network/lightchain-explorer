@@ -8,6 +8,7 @@ require('../db.js');
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
 var _ = require('lodash');
+var { waitFor } = require('../lib/utils');
 
 var async = require('async');
 
@@ -16,18 +17,11 @@ var Block = mongoose.model('Block');
 var Transaction = mongoose.model('Transaction');
 var Account = mongoose.model('Account');
 
-var web3 = require('../lib/web3')();
-var consensus = require('../lib/consensus')();
+var Web3 = require('../lib/web3');
+var Consensus = require('../lib/consensus');
 
-if (web3.isConnected())
-  console.log("Web3 connection established");
-else
-  throw "No connection, please specify web3host in conf.json";
-
-if (consensus.isConnected())
-  console.log("Consensus connection established");
-else
-  throw "No connection, please specify consensus in conf.json";
+var web3;
+var consensus;
 
 /**
  //Just listen for latest blocks and sync from the start of the app.
@@ -469,23 +463,38 @@ try {
   }
 }
 
-// patch missing blocks
-if (config.patch === true) {
-  console.log('Checking for missing blocks');
-  runPatcher(config);
-}
+(async () => {
+  do {
+    console.log(`Waiting for consensus...`);
+    await waitFor(3);
+    consensus = Consensus()
+  } while ( ! await consensus.isConnected() );
+
+  do {
+    console.log(`Waiting for web3...`);
+    await waitFor(3);
+    web3 = Web3()
+  } while ( _.isUndefined(web3));
+
+  // patch missing blocks
+  if (config.patch === true) {
+    console.log('Checking for missing blocks');
+    runPatcher(config);
+  }
 
 // check NORICHLIST env
 // you can use it like as 'NORICHLIST=1 node tools/sync.js' to disable balance updater temporary.
-if (process.env.NORICHLIST) {
-  config.useRichList = false;
-}
+  if (process.env.NORICHLIST) {
+    config.useRichList = false;
+  }
 
 // Start listening for latest blocks
-listenBlocks(config);
+  listenBlocks(config);
 
 // Starts full sync when set to true in config
-if (config.syncAll === true) {
-  console.log('Starting Full Sync');
-  syncChain(config);
-}
+  if (config.syncAll === true) {
+    console.log('Starting Full Sync');
+    syncChain(config);
+  }
+})();
+

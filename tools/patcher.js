@@ -1,18 +1,14 @@
 require( '../db.js' );
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
+var { waitFor } = require('../lib/utils');
 
 var mongoose        = require( 'mongoose' );
 var Block           = mongoose.model( 'Block' );
 var Transaction     = mongoose.model( 'Transaction' );
 
-var web3 = require('../lib/web3')();
-
-if (web3.isConnected())
-  console.log("Web3 connection established");
-else
-  throw "No connection, please specify web3host in conf.json";
-
+var Web3 = require('../lib/web3');
+var web3;
 
 var grabBlock = function(config, web3, blockHashOrNumber) {
     var desiredBlockHashOrNumber;
@@ -169,4 +165,12 @@ try {
     }
 }
 
-patchBlocks(config);
+(async () => {
+  do {
+    console.log(`Waiting for web3...`);
+    await waitFor(3);
+    web3 = Web3()
+  } while ( _.isUndefined(web3) || !web3.isConnected() );
+  patchBlocks(config);
+})();
+

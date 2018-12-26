@@ -12,14 +12,14 @@ var etherUnits = require(__lib + "etherUnits.js");
 var filterBlocks = require('./filters').filterBlocks;
 var filterTrace = require('./filters').filterTrace;
 
-var web3 = require('../lib/web3')();
-
-if (web3.isConnected())
-  console.log("Web3 connection established");
-else
-  throw "No connection, please specify web3host in conf.json";
+var Web3 = require('../lib/web3');
+var web3;
 
 exports.data = function(req, res){
+  web3 = Web3();
+  if (!web3.isConnected())
+    throw "No connection, please specify web3host in conf.json";
+
   if ("tx" in req.body) {
     web3getTx({
       txHash: req.body.tx.toLowerCase()
@@ -27,7 +27,7 @@ exports.data = function(req, res){
   } else if ("tx_trace" in req.body) {
     web3getTxTrace({
       txHash: req.body.tx_trace.toLowerCase()
-    })
+    }, res)
   } else if ("addr_trace" in req.body) {
     web3getAddrTrace({
       addr: req.body.addr_trace.toLowerCase()
@@ -93,15 +93,20 @@ var web3getTx = function({ txHash }, res) {
 }
 
 var web3getTxTrace = function({ txHash }, res) {
-  web3.trace.transaction(txHash, function(err, tx) {
-    if (err || !tx) {
-      console.error("TraceWeb3 error :" + err)
-      res.write(JSON.stringify({ "error": true }));
-    } else {
-      res.write(JSON.stringify(filterTrace(tx)));
-    }
+  if(_.isUndefined(web3.trace)) {
+    res.write(JSON.stringify({ "error": true }));
     res.end();
-  });
+  } else {
+    web3.trace.transaction(txHash, function(err, tx) {
+      if (err || !tx) {
+        console.error("TraceWeb3 error :" + err)
+        res.write(JSON.stringify({ "error": true }));
+      } else {
+        res.write(JSON.stringify(filterTrace(tx)));
+      }
+      res.end();
+    });
+  }
 }
 
 var web3getAddrTrace = function({ addr }, res) {
@@ -202,4 +207,3 @@ var web3getBlockrate = function({ }, res) {
     }
   });
 }
-exports.eth = web3.eth;

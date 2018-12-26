@@ -21,14 +21,13 @@ angular.module('BlocksApp').controller('BlockController', function($stateParams,
         $scope.block = resp.data;
         $scope.block.datetime = new Date(resp.data.timestamp*1000); 
       }
-    }).then(() =>{
+    }).then(() => {
       //fetch transactions
       $http({
         method: 'POST',
         url: '/consensus',
         data: { "action": "block-status", "height": $scope.blockNum }
       }).then(function(resp) {
-        debugger;
         $scope.block.proposer = resp.data.proposer;
         $scope.block.validators = resp.data.validators;
       });

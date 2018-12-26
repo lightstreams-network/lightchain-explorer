@@ -4,17 +4,17 @@ angular.module('BlocksApp')
       // initialize core components
       App.initAjax();
 
-      $scope.refreshBlocksInterval = setInterval(function() {
-        console.log("Refresh blocks and transactions");
-        $scope.reloadBlocks();
-        $scope.reloadTransactions();
-      }, 5000);
+      // $scope.refreshBlocksInterval = setInterval(function() {
+      //   console.log("Refresh blocks and transactions");
+      //   $scope.reloadBlocks();
+      //   $scope.reloadTransactions();
+      // }, 5000);
     });
 
-    $scope.$on('$destroy', function() {
-      clearInterval($scope.refreshBlocksInterval);
-      clearInterval($scope.refeshStatsInterval);
-    });
+    // $scope.$on('$destroy', function() {
+    //   clearInterval($scope.refreshBlocksInterval);
+    //   clearInterval($scope.refeshStatsInterval);
+    // });
 
     var URL = '/data';
 
@@ -80,10 +80,10 @@ angular.module('BlocksApp')
 
         scope.refreshStats();
 
-        scope.$parent.refeshStatsInterval = setInterval(function() {
-          console.log("Refresh stats");
-          scope.refreshStats();
-        }, 5000);
+        // scope.$parent.refeshStatsInterval = setInterval(function() {
+        //   console.log("Refresh stats");
+        //   scope.refreshStats();
+        // }, 5000);
 
         // $http.post(etcEthURL, { "action": "etceth" })
         //     .then(function(res) {

@@ -4,14 +4,14 @@
  */
 var _ = require('lodash');
 
-var consensus = require('../lib/consensus')();
-
-if (consensus.isConnected())
-  console.log("Web3 connection established");
-else
-  throw "No connection, please specify web3host in conf.json";
+var Consensus = require('../lib/consensus');
+var consensus;
 
 module.exports.route = function(req, res) {
+  var consensus = Consensus();
+  if (!consensus.isConnected())
+    throw "No connection, please specify web3host in conf.json";
+
   if (! 'action' in req.body) {
     console.error("Invalid Request: Missing action");
     res.status(400).send();

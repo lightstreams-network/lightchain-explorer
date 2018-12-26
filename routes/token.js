@@ -3,19 +3,20 @@
 /*
     Endpoint for client interface with ERC-20 tokens
 */
+const Web3 = require('../lib/web3');
 
-var eth = require('./web3relay').eth;
-
-var BigNumber = require('bignumber.js');
 var etherUnits = require(__lib + "etherUnits.js")
-
 const ABI = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"}];
 
-const Contract = eth.contract(ABI);
-
-
 module.exports = function(req, res){
-  console.log(req.body)
+  console.log(req.body);
+  web3 = Web3();
+  if (web3.isConnected())
+    console.log("Web3 connection established");
+  else
+    throw "No connection, please specify web3host in conf.json";
+
+  const Contract = web3.eth.contract(ABI);
 
   var contractAddress = req.body.address;
 
@@ -58,6 +59,4 @@ module.exports = function(req, res){
     }
   } 
   
-};  
-
-const MAX_ENTRIES = 50;
+};
