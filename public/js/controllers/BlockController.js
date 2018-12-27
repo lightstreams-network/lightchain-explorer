@@ -32,6 +32,4 @@ angular.module('BlocksApp').controller('BlockController', function($stateParams,
         $scope.block.validators = resp.data.validators;
       });
     });
-
-
 })

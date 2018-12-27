@@ -2,10 +2,11 @@
     "nodeAddr":     "localhost",
     "gethPort":     8545,
     "tendermintAddr": "127.0.0.1:26657",
+    "syncConsensus" : true,
     "startBlock":   0,
     "quiet":        false,
     "syncAll":      true,
-    "patch":        true,
+    "patch":        false,
     "patchBlocks":  100,
     "bulkSize":     100,
     "settings": {

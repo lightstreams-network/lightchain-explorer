@@ -8,7 +8,7 @@ require('../db.js');
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
 var _ = require('lodash');
-var { waitFor } = require('../lib/utils');
+var { waitFor, asyncForEach } = require('../lib/utils');
 
 var async = require('async');
 
@@ -44,14 +44,6 @@ var listenBlocks = function(config) {
       console.log('Found new block: ' + latestBlock);
       if (web3.isConnected()) {
         web3.eth.getBlock(latestBlock, true, async (error, blockData) => {
-          await consensus.getBlockStatus(blockData.height)
-            .then(resp => {
-              _.extend(blockData, resp)
-            })
-            .catch(err => {
-              console.error(err);
-            })
-
           if (error) {
             console.log('Warning: error on getting block with hash/number: ' + latestBlock + ': ' + error);
           } else if (blockData == null) {
@@ -68,64 +60,103 @@ var listenBlocks = function(config) {
     }
   });
 }
+
+var syncConsensus = async (config, startBlock) => {
+  if (_.isUndefined(startBlock)) {
+    startBlock = config.startBlock || 0;
+  }
+
+  var lastBlock = web3.eth.blockNumber - 1;
+  var blocks = Block.find({ number: { $gte: startBlock, $lte: lastBlock }, proposer: null })
+    .lean(true).sort('-number').limit(config.bulkSize | 100);
+
+  blocks.exec(async (err, docs) => {
+    if (err) {
+      console.error(err);
+      throw err
+    }
+
+    if (!docs || docs.length < 1){
+      await waitFor(5);
+      syncConsensus(config, startBlock);
+      return
+    }
+
+    await asyncForEach(docs, async blockData => {
+      try {
+        const resp = await consensus.getBlockStatus(blockData.number);
+        await updateBlockToDB(config, blockData.number, resp);
+      } catch(err) {
+        console.error(err);
+      }
+    });
+
+    // Wait for last row to be persist (@TODO Investigate why it does not wait for last row insertion)
+    await waitFor(1);
+    syncConsensus(config, startBlock);
+  });
+}
+
 /**
  If full sync is checked this function will start syncing the block chain from lastSynced param see README
  **/
 var syncChain = function(config, nextBlock) {
-  if (web3.isConnected()) {
-    if (web3.eth.syncing) {
-      console.log('Info: waiting until syncing finished... (currentBlock is #' + web3.eth.syncing.currentBlock + ')');
-      setTimeout(function() {
-        syncChain(config, nextBlock);
-      }, 10000);
-      return;
-    }
-
-    if (typeof nextBlock === 'undefined') {
-      prepareSync(config, function(error, startBlock) {
-        if (error) {
-          console.log('ERROR: error: ' + error);
-          return;
-        }
-        syncChain(config, startBlock);
-      });
-      return;
-    }
-
-    if (nextBlock == null) {
-      console.log('nextBlock is null');
-      return;
-    } else if (nextBlock < config.startBlock) {
-      writeBlockToDB(config, null, true);
-      writeTransactionsToDB(config, null, true);
-      console.log('*** Sync Finished ***');
-      config.syncAll = false;
-      return;
-    }
-
-    var count = config.bulkSize;
-    while ( nextBlock >= config.startBlock && count > 0 ) {
-      web3.eth.getBlock(nextBlock, true, function(error, blockData) {
-        if (error) {
-          console.log('Warning: error on getting block with hash/number: ' + nextBlock + ': ' + error);
-        } else if (blockData == null) {
-          console.log('Warning: null block data received from the block with hash/number: ' + nextBlock);
-        } else {
-          writeBlockToDB(config, blockData);
-          writeTransactionsToDB(config, blockData);
-        }
-      });
-      nextBlock--;
-      count--;
-    }
-
-    setTimeout(function() {
-      syncChain(config, nextBlock);
-    }, 500);
-  } else {
+  if (!web3.isConnected()) {
     console.log('Error: Web3 connection time out trying to get block ' + nextBlock + ' retrying connection now');
     syncChain(config, nextBlock);
+    return
   }
+
+  if (web3.eth.syncing) {
+    console.log('Info: waiting until syncing finished... (currentBlock is #' + web3.eth.syncing.currentBlock + ')');
+    setTimeout(function() {
+      syncChain(config, nextBlock);
+    }, 10000);
+    return;
+  }
+
+  if (typeof nextBlock === 'undefined') {
+    prepareSync(config, function(error, startBlock) {
+      if (error) {
+        console.log('ERROR: error: ' + error);
+        return;
+      }
+      syncChain(config, startBlock);
+    });
+    return;
+  }
+
+  if (nextBlock == null) {
+    console.log('nextBlock is null');
+    return;
+  } else if (nextBlock < config.startBlock) {
+    writeBlockToDB(config, null, true);
+    writeTransactionsToDB(config, null, true);
+    console.log('*** Sync Finished ***');
+    config.syncAll = false;
+    return;
+  }
+
+  var count = config.bulkSize;
+  while ( nextBlock >= config.startBlock && count > 0 ) {
+    web3.eth.getBlock(nextBlock, true, function(error, blockData) {
+      if (error) {
+        console.log('Warning: error on getting block with hash/number: ' + nextBlock + ': ' + error);
+      } else if (blockData == null) {
+        console.log('Warning: null block data received from the block with hash/number: ' + nextBlock);
+      } else {
+        writeBlockToDB(config, blockData);
+        writeTransactionsToDB(config, blockData);
+      }
+    });
+    nextBlock--;
+    count--;
+  }
+
+  setTimeout(function() {
+    syncChain(config, nextBlock);
+  }, 500);
+
 }
 /**
  Write the whole block object to DB
@@ -161,6 +192,20 @@ var writeBlockToDB = function(config, blockData, flush) {
       }
     });
   }
+}
+
+var updateBlockToDB = function(config, blockNumber, blockData) {
+  return Block.update({ number: blockNumber }, { $set: blockData}, function(err, res) {
+    if (typeof err !== 'undefined' && err) {
+      console.log('Error: Aborted due to error on DB: ' + err);
+      return
+    }
+    if (res.nModified) {
+      console.log(`Block #${blockNumber} successfully updated.`);
+    } else {
+      console.log(`Block #${blockNumber} not updated.`);
+    }
+  });
 }
 
 /**
@@ -465,16 +510,10 @@ try {
 
 (async () => {
   do {
-    console.log(`Waiting for consensus...`);
-    await waitFor(3);
-    consensus = Consensus()
-  } while ( ! await consensus.isConnected() );
-
-  do {
     console.log(`Waiting for web3...`);
     await waitFor(3);
     web3 = Web3()
-  } while ( _.isUndefined(web3));
+  } while ( _.isUndefined(web3) );
 
   // patch missing blocks
   if (config.patch === true) {
@@ -482,19 +521,31 @@ try {
     runPatcher(config);
   }
 
-// check NORICHLIST env
-// you can use it like as 'NORICHLIST=1 node tools/sync.js' to disable balance updater temporary.
+  // check NORICHLIST env
+  // you can use it like as 'NORICHLIST=1 node tools/sync.js' to disable balance updater temporary.
   if (process.env.NORICHLIST) {
     config.useRichList = false;
   }
 
-// Start listening for latest blocks
+  // Start listening for latest blocks
   listenBlocks(config);
 
-// Starts full sync when set to true in config
+  // Starts full sync when set to true in config
   if (config.syncAll === true) {
     console.log('Starting Full Sync');
     syncChain(config);
+  }
+
+  // Starts full sync when set to true in config
+  if (config.syncConsensus === true) {
+    console.log('Starting Consensus Sync');
+    do {
+      console.log(`Waiting for consensus...`);
+      await waitFor(3);
+      consensus = Consensus()
+    } while ( !await consensus.isConnected() );
+
+    syncConsensus(config);
   }
 })();
 
