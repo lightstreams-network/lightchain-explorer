@@ -102,15 +102,24 @@ li.ng-scope {
 .table-scrollable {
     margin: 0 !important;
 }
+
+.container table td{
+    word-break: break-all;
+}
+
+.container table.table-condensed td {
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+}
+
 @media(max-width: 487px) {
     .container {
         margin: 0 !important;
     }
     .page-header .page-header-top .menu-toggler {
         margin: 33px 3px 0 0;
-    }
-    .container table td{
-        word-break: break-all
     }
 }
 ::-webkit-scrollbar {

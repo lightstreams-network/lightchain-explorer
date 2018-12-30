@@ -26,21 +26,21 @@ module.exports = function(req, res){
     res.status(400).send();
   else if (req.body.action=="info") {
     try {
-      var actualBalance = eth.getBalance(contractAddress);
+      var actualBalance = web3.eth.getBalance(contractAddress);
       actualBalance = etherUnits.toEther(actualBalance, 'wei');
       var totalSupply = Token.totalSupply();
       // totalSupply = etherUnits.toEther(totalSupply, 'wei')*100;
       var decimals = Token.decimals();
       var name = Token.name();
       var symbol = Token.symbol();
-      var count = eth.getTransactionCount(contractAddress);
+      var count = web3.eth.getTransactionCount(contractAddress);
       var tokenData = {
         "balance": actualBalance,
         "total_supply": totalSupply,
         "count": count,
         "name": name,
         "symbol": symbol,
-        "bytecode": eth.getCode(contractAddress)
+        "bytecode": web3.eth.getCode(contractAddress)
       }
       res.write(JSON.stringify(tokenData));
       res.end();

@@ -37,7 +37,7 @@ var listenBlocks = function(config) {
   var newBlocks = web3.eth.filter("latest");
   newBlocks.watch(function(error, latestBlock) {
     if (error) {
-      console.log('Error: ' + error);
+      console.error(error);
     } else if (latestBlock == null) {
       console.log('Warning: null block hash');
     } else {

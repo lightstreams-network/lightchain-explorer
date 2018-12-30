@@ -96,20 +96,27 @@ var web3getTxTrace = function({ txHash }, res) {
   if(_.isUndefined(web3.trace)) {
     res.write(JSON.stringify({ "error": true }));
     res.end();
-  } else {
-    web3.trace.transaction(txHash, function(err, tx) {
-      if (err || !tx) {
-        console.error("TraceWeb3 error :" + err)
-        res.write(JSON.stringify({ "error": true }));
-      } else {
-        res.write(JSON.stringify(filterTrace(tx)));
-      }
-      res.end();
-    });
+    return;
   }
-}
+
+  web3.trace.transaction(txHash, function(err, tx) {
+    if (err || !tx) {
+      console.error("TraceWeb3 error :" + err)
+      res.write(JSON.stringify({ "error": true }));
+    } else {
+      res.write(JSON.stringify(filterTrace(tx)));
+    }
+    res.end();
+  });
+};
 
 var web3getAddrTrace = function({ addr }, res) {
+  if (_.isUndefined(web3.trace)) {
+    res.write(JSON.stringify({ "error": true }));
+    res.end();
+    return;
+  }
+
   // need to filter both to and from
   // from block to end block, paging "toAddress":[addr],
   // start from creation block to speed things up
@@ -124,7 +131,7 @@ var web3getAddrTrace = function({ addr }, res) {
     }
     res.end();
   })
-}
+};
 
 var web3getAddr = function({ addr, options}, res) {
   var addrData = {};

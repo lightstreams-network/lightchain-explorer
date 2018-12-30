@@ -86,7 +86,6 @@
 .page-header .page-header-top .top-menu {
     margin: 13px 0 0;
     padding: 0;
-    float: right;
     background: none;
 }
 
@@ -740,6 +739,7 @@
 
     .page-header .page-header-top {
         height: auto;
+        min-height: 105px;
     }
 
     .page-header .page-header-top>.container {
@@ -753,6 +753,7 @@
         padding: 0;
         margin-right: 10px;
         margin-left: 4px;
+        height: 100px;
     }
 
     .page-header .page-header-top .top-menu .navbar-nav {
