@@ -48,7 +48,6 @@
     margin: 0;
     border: 0;
     padding: 0;
-    height: 126px;
     background-image: none;
 }
 
@@ -81,14 +80,14 @@
     float: left;
     display: block;
     width: 255px;
-    height: 75px;
-    position: absolute;
+    height: 55px;
 }
 
 .page-header .page-header-top .top-menu {
     margin: 13px 0 0;
     padding: 0;
     float: right;
+    background: none;
 }
 
 .page-header .page-header-top .top-menu .navbar-nav {
@@ -655,7 +654,8 @@
     position: relative;
     display: inline-block;
     float: right;
-    width: 400px;
+    max-width: 400px;
+    min-width: 320px;
     transition: width .4s;
     margin-top: 8px;
     -webkit-border-radius: 4px;
@@ -697,7 +697,6 @@
 }
 
 .search-form.open {
-    width: 500px !important;
     transition: width .4s;
 }
 
@@ -945,6 +944,7 @@
 @media (max-width:767px) {
     .page-header .page-header-top .page-logo {
         width: auto !important;
+        display: block;
     }
 
     .page-header .page-header-top .top-menu {
@@ -1908,5 +1908,4 @@ body,html {
 
 .page-header {
     background-color: #212a33 !important;
-    height: 115px;
 }

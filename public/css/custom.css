@@ -109,6 +109,9 @@ li.ng-scope {
     .page-header .page-header-top .menu-toggler {
         margin: 33px 3px 0 0;
     }
+    .container table td{
+        word-break: break-all
+    }
 }
 ::-webkit-scrollbar {
     width: 4px;
