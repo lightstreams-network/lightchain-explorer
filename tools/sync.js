@@ -34,29 +34,40 @@ var listenBlocks = function(config) {
     }, 10000);
     return;
   }
-  var newBlocks = web3.eth.filter("latest");
-  newBlocks.watch(function(error, latestBlock) {
-    if (error) {
-      console.error(error);
-    } else if (latestBlock == null) {
-      console.log('Warning: null block hash');
-    } else {
-      console.log('Found new block: ' + latestBlock);
-      if (web3.isConnected()) {
-        web3.eth.getBlock(latestBlock, true, async (error, blockData) => {
-          if (error) {
-            console.log('Warning: error on getting block with hash/number: ' + latestBlock + ': ' + error);
-          } else if (blockData == null) {
-            console.log('Warning: null block data received from the block with hash/number: ' + latestBlock);
-          } else {
-            writeBlockToDB(config, blockData, true);
-            writeTransactionsToDB(config, blockData, true);
-          }
-        });
-      } else {
-        console.log('Error: Web3 connection time out trying to get block ' + latestBlock + ' retrying connection now');
-        listenBlocks(config);
+  var latestBlockFilter = web3.eth.filter("latest");
+  var openThreads = 0;
+
+  latestBlockFilter.watch(async (error, latestBlock) => {
+    ++openThreads;
+
+    if(openThreads > 100 && !_.isUndefined(latestBlockFilter)) {
+      console.log(`Warning: Exceeded limit of threads ${openThreads}. Stopping watcher for 10 seconds`);
+      latestBlockFilter.stopWatching();
+      setTimeout(() => listenBlocks(config), 10000);
+    }
+
+    try {
+      if (error) {
+        throw error;
       }
+
+      if (latestBlock == null) {
+        throw Error('Warning: null block hash');
+      }
+
+      if (!web3.isConnected()) {
+        throw Error('Error: Web3 connection time out trying to get block ' + latestBlock + ' retrying connection now');
+      }
+
+      console.log('Found new block: ' + latestBlock);
+      const blockData = await getBlock(latestBlock);
+      writeBlockToDB(config, blockData, true);
+      writeTransactionsToDB(config, blockData, true);
+      --openThreads;
+    } catch(err) {
+      console.log(`Got Error: ${err.message}`);
+      --openThreads;
+      await waitFor(3)
     }
   });
 }
@@ -103,7 +114,9 @@ var syncConsensus = async (config, startBlock) => {
 var syncChain = function(config, nextBlock) {
   if (!web3.isConnected()) {
     console.log('Error: Web3 connection time out trying to get block ' + nextBlock + ' retrying connection now');
-    syncChain(config, nextBlock);
+    setTimeout(function() {
+      syncChain(config, nextBlock);
+    }, 3000);
     return
   }
 
@@ -121,7 +134,9 @@ var syncChain = function(config, nextBlock) {
         console.log('ERROR: error: ' + error);
         return;
       }
-      syncChain(config, startBlock);
+      setTimeout(function() {
+        syncChain(config, startBlock);
+      }, 3000);
     });
     return;
   }
@@ -156,7 +171,20 @@ var syncChain = function(config, nextBlock) {
   setTimeout(function() {
     syncChain(config, nextBlock);
   }, 500);
+}
 
+var getBlock = (blockNumber) => {
+  return new Promise((resolve, reject) => {
+    web3.eth.getBlock(blockNumber, true, (error, blockData) => {
+      if (error) {
+        reject('Warning: error on getting block with hash/number: ' + latestBlock + ': ' + error);
+      } else if (blockData == null) {
+        reject('Warning: null block data received from the block with hash/number: ' + latestBlock);
+      } else {
+        resolve(blockData)
+      }
+    });
+  })
 }
 /**
  Write the whole block object to DB
@@ -513,7 +541,7 @@ try {
     console.log(`Waiting for web3...`);
     await waitFor(3);
     web3 = Web3()
-  } while ( _.isUndefined(web3) );
+  } while ( _.isUndefined(web3) || _.isNull(web3) );
 
   // patch missing blocks
   if (config.patch === true) {

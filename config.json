@@ -6,7 +6,7 @@
     "startBlock":   0,
     "quiet":        false,
     "syncAll":      true,
-    "patch":        false,
+    "patch":        true,
     "patchBlocks":  100,
     "bulkSize":     100,
     "settings": {
