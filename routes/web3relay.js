@@ -204,7 +204,6 @@ var web3getBlockrate = function({ }, res) {
         } else {
           console.log("StatsWeb3: check block: " + block.number);
           var blocktime = (latest.timestamp - block.timestamp) / nblock;
-          res.set('Content-Type', 'application/json');
           res.write(JSON.stringify({
             "blockHeight": latest.number,
             "blockTime": blocktime,
