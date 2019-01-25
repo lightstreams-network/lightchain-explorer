@@ -209,8 +209,9 @@ var web3getBlockrate = function({ }, res) {
             "blockTime": blocktime,
           }));
         }
+        res.set('Content-Type', 'application/json');
         res.end();
       });
     }
   });
-}
+};
