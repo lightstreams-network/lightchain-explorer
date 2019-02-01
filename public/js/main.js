@@ -53,7 +53,7 @@ Layout Partials.
 By default the partials are loaded through AngularJS ng-include directive.
 ***/
 /* Setup Layout Part - Header */
-BlocksApp.controller('HeaderController', ['$scope', '$location', 'setupObj', function($scope, $location, setupObj) {
+BlocksApp.controller('HeaderController', ['$scope', '$location', '$http', 'setupObj', function($scope, $location, $http, setupObj) {
     $scope.$on('$includeContentLoaded', function() {
         Layout.initHeader(); // init header
     });
@@ -76,6 +76,10 @@ BlocksApp.controller('HeaderController', ['$scope', '$location', 'setupObj', fun
     setupObj.then(function(res) {
         $scope.settings = res;
     });
+  $http.get('/tokens.json')
+    .then(function(res) {
+      $scope.tokens = res.data;
+    })
 }]);
 /* Search Bar */
 BlocksApp.controller('PageHeadController', ['$scope', 'setupObj', function($scope, setupObj) {
@@ -211,10 +215,10 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
             }]
           }
         })
-        .state('tokenlist', {
-            url: "/token",
-            templateUrl: "views/tokenlist.html",
-            data: {pageTitle: 'Tokens'},
+        .state('coinfactory', {
+            url: "/coinfactory",
+            templateUrl: "views/coinfactory.html",
+            data: {pageTitle: 'Coin Factory'},
             controller: "TokenListController",
             resolve: {
                 deps: ['$ocLazyLoad', function($ocLazyLoad) {
@@ -222,7 +226,7 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
                         name: 'BlocksApp',
                         insertBefore: '#ng_load_plugins_before',
                         files: [
-                             '/js/controllers/TokenListController.js'
+                             '/js/controllers/CoinFactoryController.js'
                         ]
                     });
                 }]

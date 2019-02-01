@@ -13,14 +13,24 @@ angular.module('BlocksApp').controller('TokenController', function($stateParams,
     $scope.token = {"balance": 0};
     $scope.settings = $rootScope.setup;
 
+    $http.get('/tokens.json')
+    .then(function(res) {
+      const tokens = res.data;
+      const t = tokens.filter(t => t.address == $scope.addrHash);
+      if (t.length === 1) {
+        $scope.token = { ...$scope.token, ...t[0] };
+      }
+
+    });
+
     //fetch dao stuff
     $http({
       method: 'POST',
       url: '/tokenrelay',
       data: {"action": "info", "address": address}
     }).then(function(resp) {
-      console.log(resp.data)
-      $scope.token = resp.data;
+      console.log(resp.data);
+      $scope.token = { ...$scope.token, ...resp.data };
       $scope.token.address = address;
       $scope.addr = {"bytecode": resp.data.bytecode};
       if (resp.data.name)

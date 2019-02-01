@@ -33,7 +33,7 @@
                     <a href="/">Home</a>
                 </li>
                 <li class="menu-dropdown mega-menu-dropdown ">
-                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="/token" class="dropdown-toggle"> Tokens
+                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#" class="dropdown-toggle"> CoinFactory
                         <i class="fa fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu" style="min-width: 410px">
@@ -41,10 +41,10 @@
                             <div class="mega-menu-content">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <ul class="mega-menu-submenu">
+                                        <ul ng-repeat="t in tokens" class="mega-menu-submenu">
                                             <li>
-                                                <a href="/token/0xd05957e940593192a6bdd04f72b44e9ebc4d4bfd" class="iconify">
-                                                    <i class="icon-pin"></i> LethToken</a>
+                                                <a href="/token/{{t.address}}" class="iconify">
+                                                    <i class="icon-pin"></i> {{t.name}}</a>
                                             </li>
                                         </ul>
                                     </div>

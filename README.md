@@ -80,3 +80,9 @@ Enabling stats requires running a separate process:
 
 You can configure intervals (how often a new data point is pulled) and range (how many blocks to go back) with the following:
 `RESCAN=1000:100000 node tools/stats.js` (New data point every 1,000 blocks. Go back 100,000 blocks).
+
+### Clean:
+Data is being allocated into a DB names `blockDB` in mongo, just run the following command to wipe it entirely:
+```
+mongo blockDB --eval "db.dropDatabase();"
+```
