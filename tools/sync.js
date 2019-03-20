@@ -27,6 +27,11 @@ var consensus;
  //Just listen for latest blocks and sync from the start of the app.
  **/
 var listenBlocks = function(config) {
+  if (typeof web3.eth === 'undefined') {
+    console.log("Warning: web3 is not initialized");
+    return;
+  }
+
   if (web3.eth.syncing) {
     console.log('Info: waiting until syncing finished... (currentBlock is #' + web3.eth.syncing.currentBlock + ')');
     setTimeout(function() {
@@ -73,6 +78,11 @@ var listenBlocks = function(config) {
 }
 
 var syncConsensus = async (config, startBlock) => {
+  if (typeof web3.eth === 'undefined') {
+    console.log("Warning: web3 is not initialized");
+    return;
+  }
+
   if (_.isUndefined(startBlock)) {
     startBlock = config.startBlock || 0;
   }
@@ -118,6 +128,11 @@ var syncChain = function(config, nextBlock) {
       syncChain(config, nextBlock);
     }, 3000);
     return
+  }
+
+  if (typeof web3.eth === 'undefined') {
+    console.log("Warning: web3 is not initialized");
+    return;
   }
 
   if (web3.eth.syncing) {
@@ -174,6 +189,11 @@ var syncChain = function(config, nextBlock) {
 }
 
 var getBlock = (blockNumber) => {
+  if (typeof web3.eth === 'undefined') {
+    console.log("Warning: web3 is not initialized");
+    return;
+  }
+
   return new Promise((resolve, reject) => {
     web3.eth.getBlock(blockNumber, true, (error, blockData) => {
       if (error) {
@@ -542,6 +562,8 @@ try {
     await waitFor(3);
     web3 = Web3()
   } while ( _.isUndefined(web3) || _.isNull(web3) );
+
+  await waitFor(2);
 
   // patch missing blocks
   if (config.patch === true) {

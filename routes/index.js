@@ -1,12 +1,13 @@
-var mongoose = require( 'mongoose' );
+var mongoose = require('mongoose');
+var Promises = require('promise');
 
-var Block     = mongoose.model( 'Block' );
-var Transaction = mongoose.model( 'Transaction' );
+var Block = mongoose.model('Block');
+var Transaction = mongoose.model('Transaction');
 var filters = require('./filters');
 var _ = require('lodash');
 var async = require('async');
 
-module.exports = function(app){
+module.exports = function(app) {
   var web3relay = require('./web3relay');
   var consensus = require('./consensus');
   var Token = require('./token');
@@ -28,7 +29,7 @@ module.exports = function(app){
   app.post('/consensus', consensus.route);
 }
 
-var getAddr = function(req, res){
+var getAddr = function(req, res) {
   // TODO: validate addr and tx
   var addr = req.body.addr.toLowerCase();
   var count = parseInt(req.body.count);
@@ -38,7 +39,7 @@ var getAddr = function(req, res){
 
   var data = { draw: parseInt(req.body.draw), recordsFiltered: count, recordsTotal: count };
 
-  var addrFind = Transaction.find( { $or: [{"to": addr}, {"from": addr}] })  
+  var addrFind = Transaction.find({ $or: [{ "to": addr }, { "from": addr }] })
 
   var sortOrder = '-blockNumber';
   if (req.body.order && req.body.order[0] && req.body.order[0].column) {
@@ -51,7 +52,7 @@ var getAddr = function(req, res){
   }
 
   addrFind.lean(true).sort(sortOrder).skip(start).limit(limit)
-    .exec("find", function (err, docs) {
+    .exec("find", function(err, docs) {
       if (docs)
         data.data = filters.filterTX(docs, addr);
       else
@@ -67,18 +68,18 @@ var getAddrCounter = function(req, res) {
   var data = { recordsFiltered: count, recordsTotal: count };
 
   async.waterfall([
-  function(callback) {
+    function(callback) {
 
-  Transaction.count({ $or: [{"to": addr}, {"from": addr}] }, function(err, count) {
-    if (!err && count) {
-      // fix recordsTotal
-      data.recordsTotal = count;
-      data.recordsFiltered = count;
-    }
-    callback(null);
-  });
+      Transaction.count({ $or: [{ "to": addr }, { "from": addr }] }, function(err, count) {
+        if (!err && count) {
+          // fix recordsTotal
+          data.recordsTotal = count;
+          data.recordsFiltered = count;
+        }
+        callback(null);
+      });
 
-  }], function (err) {
+    }], function(err) {
     res.write(JSON.stringify(data));
     res.end();
   });
@@ -89,12 +90,12 @@ var getBlock = function(req, res) {
   var txQuery = "number";
   var number = parseInt(req.body.block);
 
-  var blockFind = Block.findOne( { number : number }).lean(true);
-  blockFind.exec(function (err, doc) {
+  var blockFind = Block.findOne({ number: number }).lean(true);
+  blockFind.exec(function(err, doc) {
     if (err || !doc) {
       console.error("BlockFind error: " + err)
       console.error(req.body);
-      res.write(JSON.stringify({"error": true}));
+      res.write(JSON.stringify({ "error": true }));
     } else {
       var block = filters.filterBlocks([doc]);
       res.write(JSON.stringify(block[0]));
@@ -102,13 +103,13 @@ var getBlock = function(req, res) {
     res.end();
   });
 };
-var getTx = function(req, res){
+var getTx = function(req, res) {
   var tx = req.body.tx.toLowerCase();
-  var txFind = Block.findOne( { "transactions.hash" : tx }, "transactions timestamp")
-                  .lean(true);
-  txFind.exec(function (err, doc) {
-    if (!doc){
-      console.log("missing: " +tx)
+  var txFind = Block.findOne({ "transactions.hash": tx }, "transactions timestamp")
+    .lean(true);
+  txFind.exec(function(err, doc) {
+    if (!doc) {
+      console.log("missing: " + tx)
       res.write(JSON.stringify({}));
       res.end();
     } else {
@@ -122,7 +123,7 @@ var getTx = function(req, res){
 /*
   Fetch data from DB
 */
-var getData = function(req, res){
+var getData = function(req, res) {
   // TODO: error handling for invalid calls
   var action = req.body.action.toLowerCase();
   var limit = req.body.limit
@@ -131,9 +132,9 @@ var getData = function(req, res){
     if (isNaN(limit))
       var lim = MAX_ENTRIES;
     else
-      var lim = parseInt(limit);  
+      var lim = parseInt(limit);
     DATA_ACTIONS[action](lim, res);
-  } else { 
+  } else {
     console.error("Invalid Request: " + action)
     res.status(400).send();
   }
@@ -144,18 +145,17 @@ var getData = function(req, res){
 */
 var latestBlock = function(req, res) {
   var block = Block.findOne({}, "totalDifficulty")
-                      .lean(true).sort('-number');
-  block.exec(function (err, doc) {
+    .lean(true).sort('-number');
+  block.exec(function(err, doc) {
     res.write(JSON.stringify(doc));
     res.end();
   });
-} 
-
+}
 
 var getLatest = function(lim, res, callback) {
   var blockFind = Block.find({}, "number transactions timestamp miner extraData")
-                      .lean(true).sort('-number').limit(lim);
-  blockFind.exec(function (err, docs) {
+    .lean(true).sort('-number').limit(lim);
+  blockFind.exec(function(err, docs) {
     callback(docs, res);
   });
 }
@@ -163,9 +163,10 @@ var getLatest = function(lim, res, callback) {
 /* get blocks from db */
 var sendBlocks = function(lim, res) {
   var blockFind = Block.find({}, "number timestamp miner extraData proposer validators")
-                      .lean(true).sort('-number').limit(lim);
-  blockFind.exec(function (err, docs) {
-    if(!err && docs) {
+    .lean(true).sort('-number').limit(lim);
+
+  blockFind.exec(function(err, docs) {
+    if (!err && docs) {
       var block = docs[docs.length - 1];
       if (_.isUndefined(block)) {
         console.log("block not found");
@@ -177,8 +178,8 @@ var sendBlocks = function(lim, res) {
       var blockNumber = docs[docs.length - 1].number;
       // aggregate transaction counters
       Transaction.aggregate([
-        {$match: { blockNumber: { $gte: blockNumber } }},
-        {$group: { _id: '$blockNumber', count: { $sum: 1 } }}
+        { $match: { blockNumber: { $gte: blockNumber } } },
+        { $group: { _id: '$blockNumber', count: { $sum: 1 } } }
       ]).exec(function(err, results) {
         var txns = {};
         if (!err && results) {
@@ -190,12 +191,12 @@ var sendBlocks = function(lim, res) {
             doc.txn = txns[doc.number] || 0;
           });
         }
-        res.write(JSON.stringify({"blocks": filters.filterBlocks(docs)}));
+        res.write(JSON.stringify({ "blocks": filters.filterBlocks(docs) }));
         res.end();
       });
     } else {
       console.log("blockFind error:" + err);
-      res.write(JSON.stringify({"error": true}));
+      res.write(JSON.stringify({ "error": true }));
       res.end();
     }
   });
@@ -203,16 +204,68 @@ var sendBlocks = function(lim, res) {
 
 var sendTxs = function(lim, res) {
   Transaction.find({}).lean(true).sort('-blockNumber').limit(lim)
-        .exec(function (err, txs) {
-          res.write(JSON.stringify({"txs": txs}));
-          res.end();
-        });
-}
+    .exec(function(err, txs) {
+      res.write(JSON.stringify({ "txs": txs }));
+      res.end();
+    });
+};
+
+var lastTxsCount = function(lim, res) {
+  let oneDayInSec = 86400;
+  let oneWeekInSec = oneDayInSec * 7;
+  let oneMonthInSec = oneDayInSec * 30;
+  let nowDateInSec = (new Date()).getTime() / 1000;
+
+  let oneDayCount = new Promise(function(resolve) {
+    Transaction.count({ timestamp: { $gte: nowDateInSec - oneDayInSec } })
+      .exec(function(err, count) {
+        if (err) {
+          console.error(err);
+          resolve(0)
+        } else {
+          resolve(count)
+        }
+      });
+  });
+  let oneWeekCount = new Promise(function(resolve) {
+    Transaction.count({ timestamp: { $gte: nowDateInSec - oneWeekInSec } })
+      .exec(function(err, count) {
+        if (err) {
+          console.error(err);
+          resolve(0)
+        } else {
+          resolve(count)
+        }
+      });
+  });
+  let oneMonthCount = new Promise(function(resolve) {
+    Transaction.count({ timestamp: { $gte: nowDateInSec - oneMonthInSec } })
+      .exec(function(err, count) {
+        if (err) {
+          console.error(err);
+          resolve(0)
+        } else {
+          resolve(count)
+        }
+      });
+  });
+
+
+  Promises.all([oneDayCount, oneWeekCount, oneMonthCount]).then(function(values) {
+    res.write(JSON.stringify({
+      "oneDayCount": values[0],
+      "oneWeekCount": values[1],
+      "oneMonthCount": values[2],
+    }));
+    res.end();
+  });
+};
+
 
 const MAX_ENTRIES = 10;
 
 const DATA_ACTIONS = {
   "latest_blocks": sendBlocks,
-  "latest_txs": sendTxs
-}
-
+  "latest_txs": sendTxs,
+  "latest_txs_counts": lastTxsCount,
+};

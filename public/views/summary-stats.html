@@ -15,22 +15,30 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
         <div class="dashboard-stat2 ">
             <div class="display">
                 <div class="icon">
                     <i class="fa fa-hourglass-half"></i>
                 </div>
-                <div class="number">
-                    <h3>
-                        <span data-counter="counterup" data-value="stats.blockTime">{{stats.blockTime | number: 2}} s</span>
-                    </h3>
-                    <small>Block Time</small>
+                <div class="number multi-item">
+                    <div class="item">
+                        <h3><span data-counter="counterup" data-value="stats.blockTime">{{stats.oneTxDayCount}}</span></h3>
+                        <small>tx/day</small>
+                    </div>
+                    <div class="item">
+                        <h3><span data-counter="counterup" data-value="stats.blockTime">{{stats.oneTxWeekCount}}</span></h3>
+                        <small>tx/week</small>
+                    </div>
+                    <div class="item">
+                        <h3><span data-counter="counterup" data-value="stats.blockTime">{{stats.oneTxMonthCount}}</span></h3>
+                        <small>tx/month</small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
         <div class="dashboard-stat2 ">
             <div class="display">
                 <div class="icon">
@@ -42,7 +50,7 @@
                             {{stats.onlinevalidators | number: 0}} / {{stats.totalvalidators | number: 0}}
                         </span>
                     </h3>
-                    <small>Active Validators</small>
+                    <small>Validators</small>
                 </div>
             </div>
         </div>

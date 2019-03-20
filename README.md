@@ -1,28 +1,33 @@
-# ETCExplorer
+# Lightchain Explorer
 
-<b>Live Version: [etherhub.io](http://etherhub.io)</b>
+This project was forked from [ETC Block Explorer Development](https://github.com/ethereumclassic/explorer).
 
-Follow the project progress at: [ETC Block Explorer Development](https://github.com/ethereumclassic/explorer)
+## Installation
 
-## Local installation
-
-Clone the repo
-
-`git clone https://github.com/ethereumclassic/explorer`
+### Pre-requirements
 
 Download [Nodejs and npm](https://docs.npmjs.com/getting-started/installing-node "Nodejs install") if you don't have them
 
-Install dependencies:
+### Local installation
 
-`npm install`
+**Clone Repository**
+```
+git clone https://github.com/lightstreams-network/lightchain-explorer
+```
 
-Install mongodb:
+**Install dependencies**
+
+```
+npm install
+```
+
+***Install mongodb***
 
 MacOS: `brew install mongodb`
 
 Ubuntu: `sudo apt-get install -y mongodb-org`
 
-## Populate the DB
+### Populate the DB
 
 This will fetch and parse the entire blockchain.
 
@@ -35,19 +40,35 @@ Basic settings:
 {
     "nodeAddr":     "localhost",
     "gethPort":     8545,
+    "tendermintAddr": "127.0.0.1:26657",
+    "syncConsensus" : true,
     "startBlock":   0,
-    "endBlock":     "latest",
-    "quiet":        true,
+    "quiet":        false,
     "syncAll":      true,
     "patch":        true,
     "patchBlocks":  100,
+    "bulkSize":     100,
     "settings": {
-        "symbol": "ETC",
-        "name": "Ethereum Classic",
-        "title": "Ethereum Classic Block Explorer",
-        "author": "Elaine"
+        "symbol": "PHT",
+        "name": "Lightchain",
+        "title": "Lightchain Block Explorer",
+        "author": "Gabriel Garrido",
+        "contact": "mailto:contact@lightstreams.io",
+        "about": "Project forked of ",
+        "medium": "https://medium.com/lightstreams",
+        "reddit": "https://www.reddit.com/r/LightstreamsNetwork",
+        "twitter": "https://twitter.com/lightstreams_io",
+        "linkedin": "https://www.linkedin.com/company/lightstreams-io",
+        "github": "https://github.com/lightstreams-network",
+        "logo": "/img/logo-company.png",
+        "customCss": "blue-gray.css",
+        "copyright": "2018 &copy; All Rights Reserved - Lightstreams Network OÜ. Registered in Estonia.",
+        "validators": {
+            "0x2DE3B810E4EAC51A10A3740D15AE92142B01DC7B": "sirius-node-1"
+         }
     }
 }
+
 
 ```
 

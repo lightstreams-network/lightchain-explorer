@@ -97,8 +97,6 @@ module.exports.Transaction = mongoose.model('Transaction');
 module.exports.Account = mongoose.model('Account');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGO_URI || `mongodb://localhost/${DBName}`, {
-  useMongoClient: true
-});
+mongoose.connect(process.env.MONGO_URI || `mongodb://localhost/${DBName}`, { useNewUrlParser: true });
 
 // mongoose.set('debug', true);

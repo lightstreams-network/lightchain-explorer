@@ -29,6 +29,9 @@ angular.module('BlocksApp')
       }).then(function(resp) {
         $scope.latest_blocks = resp.data.blocks;
         $scope.blockLoading = false;
+      }).catch(function(err) {
+        console.error(err);
+        $scope.blockLoading = false;
       });
     }
 
@@ -41,6 +44,9 @@ angular.module('BlocksApp')
       }).then(function(resp) {
         $scope.latest_txs = resp.data.txs;
         $scope.txLoading = false;
+      }).catch(function(err) {
+        console.error(err);
+        $scope.blockLoading = false;
       });
     }
 
@@ -60,13 +66,14 @@ angular.module('BlocksApp')
         scope.stats.onlinevalidators = 1;
         scope.stats.totalvalidators = 1;
         scope.stats.usdPht = 0.15;
+        scope.stats.oneTxDayCount = 0;
+        scope.stats.oneTxWeekCount = 0;
+        scope.stats.oneTxMonthCount = 0;
 
         scope.refreshStats = function() {
           $http.post("/web3relay", { "action": "blockrate" })
             .then(function(res) {
               console.log('blockrate', res.data);
-              // scope.stats.hashrate = res.data.hashrate;
-              // scope.stats.difficulty = res.data.difficulty;
               scope.stats.blockHeight = res.data.blockHeight;
               scope.stats.blockTime = res.data.blockTime;
             });
@@ -75,25 +82,20 @@ angular.module('BlocksApp')
               console.log('Consensus', res.data);
               scope.stats.onlinevalidators = _.size(res.data.active_validators);
               scope.stats.totalvalidators = _.size(res.data.validators);
-            })
-        }
+            });
+          $http.post('/data', { "action": "latest_txs_counts" })
+            .then(function(res) {
+              console.log('Txs counts', res.data);
+              scope.stats.oneTxDayCount = res.data.oneDayCount;
+              scope.stats.oneTxWeekCount = res.data.oneWeekCount;
+              scope.stats.oneTxMonthCount = res.data.oneMonthCount;
+            }).catch(function(err) {
+            console.error(err);
+            $scope.blockLoading = false;
+          });
+        };
 
         scope.refreshStats();
-
-        // scope.$parent.refeshStatsInterval = setInterval(function() {
-        //   console.log("Refresh stats");
-        //   scope.refreshStats();
-        // }, 5000);
-
-        // $http.post(etcEthURL, { "action": "etceth" })
-        //     .then(function(res) {
-        //         scope.stats.etcHashrate = res.data.etcHashrate;
-        //         scope.stats.ethHashrate = res.data.ethHashrate;
-        //         scope.stats.etcEthHash = res.data.etcEthHash;
-        //         scope.stats.ethDiff = res.data.ethDiff;
-        //         scope.stats.etcDiff = res.data.etcDiff;
-        //         scope.stats.etcEthDiff = res.data.etcEthDiff;
-        //     });
       }
     }
   })

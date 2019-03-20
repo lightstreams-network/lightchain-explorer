@@ -143,3 +143,29 @@ li.ng-scope {
     background-color: transparent;
 }
 .page-spinner-bar{margin-top:-84px;margin-left:-98px;top:50%;left:50%;}
+
+.display .number.multi-item .item {
+    display: inline-block;
+    margin-right: 25px;
+}
+
+.display .number.multi-item .item h3 {
+    font-size: 2.1em;
+}
+
+/*@media (min-width: 768px) {*/
+    /*.display .number.multi-item .item {*/
+        /*margin-right: 20px;*/
+    /*}*/
+/*}*/
+/*@media (min-width: 992px) {*/
+    /*.display .number.multi-item .item {*/
+        /*margin-right: 20px;*/
+    /*}*/
+/*}*/
+
+/*@media (min-width: 1200px) {*/
+    /*.display .number.multi-item .item {*/
+        /*margin-right: 20px;*/
+    /*}*/
+/*}*/
