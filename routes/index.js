@@ -233,7 +233,7 @@ var TotalTxsCount = function(lim, res) {
 };
 
 var CalculateTPS = function(lim, res) {
-  Transaction.find().lean(true).sort('-nonce').limit(1000).exec(function(err, result) {
+  Transaction.find().lean(true).sort('-timestamp').limit(1000).exec(function(err, result) {
     debugger;
     if (err) {
       console.error(err);
@@ -250,7 +250,7 @@ var CalculateTPS = function(lim, res) {
 
     do {
       tx = result.pop();
-      if (tx.timestamp  < lastTs + 1) { // If it happen within same second
+      if (tx.timestamp  <= lastTs + 1) { // If it happen within same second
         tps += 1;
         if (maxTPS < tps) {
           maxTPS = tps;
