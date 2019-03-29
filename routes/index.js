@@ -246,7 +246,7 @@ var CalculateTPS = function(lim, res) {
     let tx = result.pop();
     let lastTs = tx.timestamp;
     let lastBlock = tx.blockNumber;
-    glet tps = 1;
+    let tps = 1;
     let maxTPS = 1;
 
     do {
