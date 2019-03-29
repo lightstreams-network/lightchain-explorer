@@ -8,7 +8,8 @@
                 <div class="number">
                     <small>Last block</small>
                     <h4>
-                        <span data-counter="counterup" data-value="stats.blockHeight"># {{stats.blockHeight | number: 0 }}</span>
+                        <span data-counter="counterup" data-value="stats.blockHeight" ng-show="stats.blockHeight"># {{stats.blockHeight | number: 0 }}</span>
+                        <span data-counter="counterup" data-value="stats.blockHeight" ng-hide="stats.blockHeight"># - </span>
                     </h4>
                 </div>
             </div>
@@ -23,9 +24,7 @@
                 <div class="number">
                     <small>Total Supply (PHT)</small>
                     <h4>
-                        <span data-counter="counterup" data-value="stats.validatorsrate">
-                            {{stats.totalSupply | number: 0}}
-                        </span>
+                        <span data-counter="counterup" data-value="stats.validatorsrate">{{stats.totalSupply | number: 0}}</span>
                     </h4>
                 </div>
             </div>
@@ -41,9 +40,8 @@
                     <div class="item">
                         <small>Total Transactions</small>
                         <h4>
-                            <span data-counter="counterup" data-value="stats.blockTime">
-                                {{stats.totalTxs | number : 0}}
-                            </span>
+                            <span data-counter="counterup" data-value="stats.blockTime" ng-show="stats.totalTxs">{{stats.totalTxs | number : 0}}</span>
+                            <span data-counter="counterup" data-value="stats.blockTime" ng-hide="stats.totalTxs">{{ "-" }}</span>
                         </h4>
                     </div>
                 </div>
@@ -60,9 +58,8 @@
                     <div class="item">
                         <small>Txs per second (tps)</small>
                         <h4>
-                            <span data-counter="counterup" data-value="stats.blockTime">
-                                {{stats.tps | number : 0}}
-                            </span>
+                            <span data-counter="counterup" data-value="stats.blockTime" ng-show="stats.tps">{{stats.tps | number : 0}}</span>
+                            <span data-counter="counterup" data-value="stats.blockTime" ng-hide="stats.tps">{{ "-" }}</span>
                         </h4>
                     </div>
                 </div>

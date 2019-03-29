@@ -84,7 +84,7 @@ angular.module('BlocksApp')
 
         scope.stats.totalSupply = 300000000;
         scope.stats.totalTxs = null;
-        scope.stats.tps = 100;
+        scope.stats.tps = null;
 
         scope.refreshStats = function() {
           $http.post("/web3relay", { "action": "blockrate" })
