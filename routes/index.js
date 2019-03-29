@@ -245,19 +245,21 @@ var CalculateTPS = function(lim, res) {
 
     let tx = result.pop();
     let lastTs = tx.timestamp;
-    let tps = 1;
+    let lastBlock = tx.blockNumber;
+    glet tps = 1;
     let maxTPS = 1;
 
     do {
       tx = result.pop();
-      if (tx.timestamp  <= lastTs + 1) { // If it happen within same second
+      if (tx.timestamp <= lastTs + 1 && tx.blockNumber === lastBlock) { // If it happen within same second
         tps += 1;
         if (maxTPS < tps) {
           maxTPS = tps;
         }
       } else { // Otherwise restart counter
         tps = 1;
-        lastTs = tx.timestamp
+        lastTs = tx.timestamp;
+        lastBlock = tx.blockNumber;
       }
     } while ( result.length );
 
