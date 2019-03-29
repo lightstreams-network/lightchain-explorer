@@ -33,18 +33,19 @@
                     <a href="/">Home</a>
                 </li>
                 <li class="menu-dropdown mega-menu-dropdown ">
-                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#" class="dropdown-toggle"> CoinFactory
+                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#"
+                       class="dropdown-toggle"> Genesis
                         <i class="fa fa-angle-down"></i>
                     </a>
-                    <ul class="dropdown-menu" style="min-width: 410px">
+                    <ul class="dropdown-menu" style="min-width: 450px">
                         <li>
                             <div class="mega-menu-content">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <ul ng-repeat="t in tokens" class="mega-menu-submenu">
+                                        <ul ng-repeat="(acc_id, acc_add) in alloc_addresses" class="mega-menu-submenu">
                                             <li>
-                                                <a href="/token/{{t.address}}" class="iconify">
-                                                    <i class="icon-pin"></i> {{t.name}}</a>
+                                                <a href="/addr/{{acc_add}}" class="iconify">
+                                                    <i class="icon-wallet"></i> {{acc_id}}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -53,6 +54,27 @@
                         </li>
                     </ul>
                 </li>
+                <!--<li class="menu-dropdown mega-menu-dropdown ">-->
+                    <!--<a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#" class="dropdown-toggle"> CoinFactory-->
+                        <!--<i class="fa fa-angle-down"></i>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu" style="min-width: 410px">-->
+                        <!--<li>-->
+                            <!--<div class="mega-menu-content">-->
+                                <!--<div class="row">-->
+                                    <!--<div class="col-md-6">-->
+                                        <!--<ul ng-repeat="t in tokens" class="mega-menu-submenu">-->
+                                            <!--<li>-->
+                                                <!--<a href="/token/{{t.address}}" class="iconify">-->
+                                                    <!--<i class="icon-pin"></i> {{t.name}}</a>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
             </ul>
         </div>
     </div>

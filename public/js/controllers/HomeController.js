@@ -20,12 +20,22 @@ angular.module('BlocksApp')
 
     $rootScope.isHome = true;
 
+    $scope.loadMoreBlocks = function() {
+      $scope.blockLimit += 10;
+      $scope.reloadBlocks();
+    };
+
+    $scope.loadMoreTransactions = function() {
+      $scope.txsLimit += 10;
+      $scope.reloadTransactions();
+    };
+
     $scope.reloadBlocks = function() {
       $scope.blockLoading = true;
       $http({
         method: 'POST',
         url: URL,
-        data: { "action": "latest_blocks" }
+        data: { "action": "latest_blocks", "limit": $scope.blockLimit }
       }).then(function(resp) {
         $scope.latest_blocks = resp.data.blocks;
         $scope.blockLoading = false;
@@ -33,14 +43,14 @@ angular.module('BlocksApp')
         console.error(err);
         $scope.blockLoading = false;
       });
-    }
+    };
 
     $scope.reloadTransactions = function() {
       $scope.txLoading = true;
       $http({
         method: 'POST',
         url: URL,
-        data: { "action": "latest_txs" }
+        data: { "action": "latest_txs", "limit": $scope.txsLimit }
       }).then(function(resp) {
         $scope.latest_txs = resp.data.txs;
         $scope.txLoading = false;
@@ -54,6 +64,8 @@ angular.module('BlocksApp')
     $scope.reloadTransactions();
     $scope.txLoading = false;
     $scope.blockLoading = false;
+    $scope.txsLimit = 10;
+    $scope.blockLimit = 10;
     $scope.settings = $rootScope.setup;
   })
   .directive('simpleSummaryStats', function($http) {
@@ -63,12 +75,15 @@ angular.module('BlocksApp')
       scope: true,
       link: function(scope, elem, attrs) {
         scope.stats = {};
-        scope.stats.onlinevalidators = 1;
-        scope.stats.totalvalidators = 1;
-        scope.stats.usdPht = 0.15;
-        scope.stats.oneTxDayCount = 0;
-        scope.stats.oneTxWeekCount = 0;
-        scope.stats.oneTxMonthCount = 0;
+        // scope.stats.onlinevalidators = 1;
+        // scope.stats.totalvalidators = 1;
+        // scope.stats.usdPht = 0.15;
+        // scope.stats.oneTxDayCount = 0;
+        // scope.stats.oneTxWeekCount = 0;
+        // scope.stats.oneTxMonthCount = 0;
+
+        scope.stats.totalSupply = 300000000;
+        scope.stats.totalTxs = null;
 
         scope.refreshStats = function() {
           $http.post("/web3relay", { "action": "blockrate" })
@@ -77,22 +92,30 @@ angular.module('BlocksApp')
               scope.stats.blockHeight = res.data.blockHeight;
               scope.stats.blockTime = res.data.blockTime;
             });
-          $http.post("/consensus", { "action": "status" })
-            .then(function(res) {
-              console.log('Consensus', res.data);
-              scope.stats.onlinevalidators = _.size(res.data.active_validators);
-              scope.stats.totalvalidators = _.size(res.data.validators);
-            });
-          $http.post('/data', { "action": "latest_txs_counts" })
+          $http.post('/data', { "action": "total_txs" })
             .then(function(res) {
               console.log('Txs counts', res.data);
-              scope.stats.oneTxDayCount = res.data.oneDayCount;
-              scope.stats.oneTxWeekCount = res.data.oneWeekCount;
-              scope.stats.oneTxMonthCount = res.data.oneMonthCount;
+              scope.stats.totalTxs = res.data.totalTxs;
             }).catch(function(err) {
             console.error(err);
-            $scope.blockLoading = false;
+            scope.blockLoading = false;
           });
+          // $http.post("/consensus", { "action": "status" })
+          //   .then(function(res) {
+          //     console.log('Consensus', res.data);
+          //     scope.stats.onlinevalidators = _.size(res.data.active_validators);
+          //     scope.stats.totalvalidators = _.size(res.data.validators);
+          //   });
+          // $http.post('/data', { "action": "latest_txs_counts" })
+          //   .then(function(res) {
+          //     console.log('Txs counts', res.data);
+          //     scope.stats.oneTxDayCount = res.data.oneDayCount;
+          //     scope.stats.oneTxWeekCount = res.data.oneWeekCount;
+          //     scope.stats.oneTxMonthCount = res.data.oneMonthCount;
+          //   }).catch(function(err) {
+          //   console.error(err);
+          //   scope.blockLoading = false;
+          // });
         };
 
         scope.refreshStats();

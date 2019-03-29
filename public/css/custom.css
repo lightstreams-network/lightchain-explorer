@@ -1,8 +1,16 @@
-div.page-logo {overflow: visible;}
-img.logo-default {
-    max-height: 70px;
-    margin-top: 18px;
+div.page-logo {
+    overflow: visible;
+    padding-top:20px;
 }
+img.logo-default {
+    max-height: 50px;
+    margin-top: 12px;
+}
+
+li .medium {
+    background: url(../img/social/medium.png)
+}
+
 .create{background-color:#36c6d3}
 .truncate-txhash, .truncate-addrhash{
     white-space:nowrap; 
@@ -144,13 +152,40 @@ li.ng-scope {
 }
 .page-spinner-bar{margin-top:-84px;margin-left:-98px;top:50%;left:50%;}
 
-.display .number.multi-item .item {
-    display: inline-block;
-    margin-right: 25px;
+/*.display .number{*/
+    /*width: 85%;*/
+    /*text-align: center;*/
+/*}*/
+
+@media (min-width: 768px) {
+    .display .number {
+        width: 80%;
+        text-align: center;
+    }
 }
 
-.display .number.multi-item .item h3 {
-    font-size: 2.1em;
+.display .number.multi-item {
+    display: flex;
+    width: 90%;
+}
+
+.display .number.multi-item .item {
+    flex-grow: 1;
+    flex-flow: row wrap;
+    margin-right: 25px;
+    text-align: center;
+}
+
+/*.display .number.multi-item .item h3 {*/
+    /*font-size: 2.1em;*/
+    /*text-align: center;*/
+/*}*/
+
+.display .number h4 {
+    margin: 0 0 2px;
+    padding: 0;
+    font-size: 28px;
+    font-weight: 400;
 }
 
 /*@media (min-width: 768px) {*/

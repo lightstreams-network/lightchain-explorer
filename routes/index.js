@@ -103,6 +103,11 @@ var getBlock = function(req, res) {
     res.end();
   });
 };
+
+var getTxs = function({} , res) {
+  Transaction.get()
+}
+
 var getTx = function(req, res) {
   var tx = req.body.tx.toLowerCase();
   var txFind = Block.findOne({ "transactions.hash": tx }, "transactions timestamp")
@@ -126,7 +131,7 @@ var getTx = function(req, res) {
 var getData = function(req, res) {
   // TODO: error handling for invalid calls
   var action = req.body.action.toLowerCase();
-  var limit = req.body.limit
+  var limit = req.body.limit;
 
   if (action in DATA_ACTIONS) {
     if (isNaN(limit))
@@ -200,12 +205,46 @@ var sendBlocks = function(lim, res) {
       res.end();
     }
   });
-}
+};
 
 var sendTxs = function(lim, res) {
   Transaction.find({}).lean(true).sort('-blockNumber').limit(lim)
     .exec(function(err, txs) {
       res.write(JSON.stringify({ "txs": txs }));
+      res.end();
+    });
+};
+
+var TotalTxsCount = function(lim, res) {
+  Transaction.count()
+    .exec(function(err, count) {
+      if (err) {
+        console.error(err);
+        totalTxs = 0;
+      } else {
+        totalTxs  = count;
+      }
+
+      res.write(JSON.stringify({
+        "totalTxs": totalTxs,
+      }));
+      res.end();
+    });
+};
+
+var CalculateTPS = function(lim, res) {
+  Transaction.aggregate()
+    .exec(function(err, count) {
+      if (err) {
+        console.error(err);
+        totalTxs = 0;
+      } else {
+        totalTxs = count;
+      }
+
+      res.write(JSON.stringify({
+        "totalTxs": totalTxs,
+      }));
       res.end();
     });
 };
@@ -261,6 +300,11 @@ var lastTxsCount = function(lim, res) {
   });
 };
 
+var GetAllTxs = function(lim, res) {
+  Transaction().find().exec(function(err, values) {
+    res.write(JSON.stringify(values));
+  });
+};
 
 const MAX_ENTRIES = 10;
 
@@ -268,4 +312,6 @@ const DATA_ACTIONS = {
   "latest_blocks": sendBlocks,
   "latest_txs": sendTxs,
   "latest_txs_counts": lastTxsCount,
+  "total_txs": TotalTxsCount,
+  "get_all_txs": GetAllTxs,
 };

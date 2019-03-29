@@ -105,7 +105,7 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
                       }, "targets": [6]},
           ]
       });
-    }
+    };
 
     var fetchInternalTxs = function() {
       $http({

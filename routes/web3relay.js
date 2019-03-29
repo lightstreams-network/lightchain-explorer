@@ -4,7 +4,6 @@
     Endpoint for client to talk to etc node
 */
 
-
 var _ = require('lodash');
 var BigNumber = require('bignumber.js');
 var etherUnits = require(__lib + "etherUnits.js");
@@ -15,7 +14,7 @@ var filterTrace = require('./filters').filterTrace;
 var Web3 = require('../lib/web3');
 var web3;
 
-exports.data = function(req, res){
+exports.data = function(req, res) {
   web3 = Web3();
   if (!web3.isConnected())
     throw "No connection, please specify web3host in conf.json";
@@ -40,14 +39,16 @@ exports.data = function(req, res){
   } else if ("block" in req.body) {
     var blockNumOrHash;
     if (/^(0x)?[0-9a-f]{64}$/i.test(req.body.block.trim())) {
-        blockNumOrHash = req.body.block.toLowerCase();
+      blockNumOrHash = req.body.block.toLowerCase();
     } else {
-        blockNumOrHash = parseInt(req.body.block);
+      blockNumOrHash = parseInt(req.body.block);
     }
-    web3getBlock({blockNumOrHash}, res);
+    web3getBlock({ blockNumOrHash }, res);
   } else if ("action" in req.body) {
     if (req.body.action === 'blockrate') {
       web3getBlockrate({}, res)
+    } else if (req.body.action === 'blockrate') {
+      web3getTxs({}, res)
     } else {
       console.error("Invalid Request: " + action)
       res.status(400).send();
@@ -93,7 +94,7 @@ var web3getTx = function({ txHash }, res) {
 }
 
 var web3getTxTrace = function({ txHash }, res) {
-  if(_.isUndefined(web3.trace)) {
+  if (_.isUndefined(web3.trace)) {
     res.write(JSON.stringify({ "error": true }));
     res.end();
     return;
@@ -133,7 +134,7 @@ var web3getAddrTrace = function({ addr }, res) {
   })
 };
 
-var web3getAddr = function({ addr, options}, res) {
+var web3getAddr = function({ addr, options }, res) {
   var addrData = {};
 
   if (options.indexOf("balance") > -1) {
@@ -182,7 +183,7 @@ var web3getBlock = function({ blockNumOrHash }, res) {
   });
 }
 
-var web3getBlockrate = function({ }, res) {
+var web3getBlockrate = function({}, res) {
   web3.eth.getBlock('latest', function(err, latest) {
     if (err || !latest) {
       console.error("StatsWeb3 error :" + err);

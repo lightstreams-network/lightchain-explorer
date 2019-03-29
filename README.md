@@ -12,7 +12,7 @@ This project was forked from [ETC Block Explorer Development](https://github.com
 - [Nodejs and npm](https://docs.npmjs.com/getting-started/installing-node)
 - [Mongo-db](https://docs.mongodb.com/v3.2/installation/)
 
-
+PHT PRICE
 ### Install Lightchain
 In order to run the entire tech stack of the blockchain explorer
 we would need to run a `lightchain` node locally.

@@ -6,51 +6,11 @@
                     <i class="fa fa-cube"></i>
                 </div>
                 <div class="number">
-                    <h3>
+                    <h4>
                     <small>#</small>
                         <span data-counter="counterup" data-value="stats.blockHeight">{{stats.blockHeight | number: 0 }}</span>
-                    </h3>
-                    <small>Block Height</small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-        <div class="dashboard-stat2 ">
-            <div class="display">
-                <div class="icon">
-                    <i class="fa fa-hourglass-half"></i>
-                </div>
-                <div class="number multi-item">
-                    <div class="item">
-                        <h3><span data-counter="counterup" data-value="stats.blockTime">{{stats.oneTxDayCount}}</span></h3>
-                        <small>tx/day</small>
-                    </div>
-                    <div class="item">
-                        <h3><span data-counter="counterup" data-value="stats.blockTime">{{stats.oneTxWeekCount}}</span></h3>
-                        <small>tx/week</small>
-                    </div>
-                    <div class="item">
-                        <h3><span data-counter="counterup" data-value="stats.blockTime">{{stats.oneTxMonthCount}}</span></h3>
-                        <small>tx/month</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
-        <div class="dashboard-stat2 ">
-            <div class="display">
-                <div class="icon">
-                    <i class="fa fa-tachometer"></i>
-                </div>
-                <div class="number">
-                    <h3>
-                        <span data-counter="counterup" data-value="stats.validatorsrate">
-                            {{stats.onlinevalidators | number: 0}} / {{stats.totalvalidators | number: 0}}
-                        </span>
-                    </h3>
-                    <small>Validators</small>
+                    </h4>
+                    <small>Last block</small>
                 </div>
             </div>
         </div>
@@ -58,18 +18,54 @@
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="dashboard-stat2 ">
             <div class="display">
-                <div class="number">
-                    <h3 class="font-green-sharp">
-                        <small class="font-green-sharp">$</small>
-                        <span data-counter="counterup" data-value="stats.usdPht">{{stats.usdPht}}</span>
-                    </h3>
-                    <small>PHT Price</small>
-                </div>
                 <div class="icon">
-                    <i class="icon-fire"></i>
-                    <a class="btn btn-med" ng-click="refreshStats()">
-                        <i class="fa fa-refresh" ng-class="{'fa-spin': txLoading}"></i>
-                    </a>
+                    <i class="fa fa-diamond"></i>
+                </div>
+                <div class="number">
+                    <h4>
+                        <span data-counter="counterup" data-value="stats.validatorsrate">
+                            {{stats.totalSupply | number: 0}}
+                        </span>
+                    </h4>
+                    <small>Total Supply (PHT)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat2 ">
+            <div class="display">
+                <div class="icon">
+                    <i class="fa fa-fire"></i>
+                </div>
+                <div class="number">
+                    <div class="item">
+                        <h4>
+                            <span data-counter="counterup" data-value="stats.blockTime">
+                                {{stats.totalTxs | number : 0}}
+                            </span>
+                        </h4>
+                        <small>Total Txs</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat2 ">
+            <div class="display">
+                <div class="icon">
+                    <i class="fa fa-tachometer"></i>
+                </div>
+                <div class="number">
+                    <div class="item">
+                        <h4>
+                            <span data-counter="counterup" data-value="stats.blockTime">
+                                {{stats.totalTxs | number : 0}}
+                            </span>
+                        </h4>
+                        <small>TPS</small>
+                    </div>
                 </div>
             </div>
         </div>
