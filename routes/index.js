@@ -104,7 +104,7 @@ var getBlock = function(req, res) {
   });
 };
 
-var getTxs = function({} , res) {
+var getTxs = function({}, res) {
   Transaction.get()
 }
 
@@ -222,7 +222,7 @@ var TotalTxsCount = function(lim, res) {
         console.error(err);
         totalTxs = 0;
       } else {
-        totalTxs  = count;
+        totalTxs = count;
       }
 
       res.write(JSON.stringify({
@@ -233,20 +233,39 @@ var TotalTxsCount = function(lim, res) {
 };
 
 var CalculateTPS = function(lim, res) {
-  Transaction.aggregate()
-    .exec(function(err, count) {
-      if (err) {
-        console.error(err);
-        totalTxs = 0;
-      } else {
-        totalTxs = count;
-      }
-
+  Transaction.find().lean(true).sort('-nonce').limit(1000).exec(function(err, result) {
+    debugger;
+    if (err) {
+      console.error(err);
       res.write(JSON.stringify({
-        "totalTxs": totalTxs,
+        "tps": 1,
       }));
       res.end();
-    });
+    }
+
+    let tx = result.pop();
+    let lastTs = tx.timestamp;
+    let tps = 1;
+    let maxTPS = 1;
+
+    do {
+      tx = result.pop();
+      if (tx.timestamp  < lastTs + 1) { // If it happen within same second
+        tps += 1;
+        if (maxTPS < tps) {
+          maxTPS = tps;
+        }
+      } else { // Otherwise restart counter
+        tps = 1;
+        lastTs = tx.timestamp
+      }
+    } while ( result.length );
+
+    res.write(JSON.stringify({
+      "tps": maxTPS,
+    }));
+    res.end();
+  });
 };
 
 var lastTxsCount = function(lim, res) {
@@ -288,7 +307,6 @@ var lastTxsCount = function(lim, res) {
         }
       });
   });
-
 
   Promises.all([oneDayCount, oneWeekCount, oneMonthCount]).then(function(values) {
     res.write(JSON.stringify({
