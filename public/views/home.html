@@ -13,11 +13,6 @@
                 </div>
                 <div class="actions">
                     <div class="btn-group">
-                        <a class="btn btn-med" ng-click="loadMoreBlocks()">
-                            <span class="caption-subject">Load more blocks</span>
-                        </a>
-                    </div>
-                    <div class="btn-group">
                         <a class="btn btn-med" ng-click="reloadBlocks()">
                             <i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
                         </a>
@@ -39,11 +34,18 @@
                             <div class="todo-tasklist-item-text">
                                 Proposed by
                                 <a href="/validator/{{t.proposer}}" ng-show="t.proposer">{{t.proposer}}</a>
-                                <a ng-hide="t.proposer">Loading...</a>
+                                <a ng-hide="t.proposer">( Pending... )</a>
                                 <br>{{t.txn}} txns
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="portlet-bottom">
+                <div class="actions">
+                    <a class="btn btn-med" ng-click="loadMoreBlocks()">
+                        <span class="caption-subject">See more</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -58,11 +60,6 @@
                     <span class="caption-subject font-red bold uppercase">Transactions</span>
                 </div>
                 <div class="actions">
-                    <div class="btn-group">
-                        <a class="btn btn-med" ng-click="loadMoreTransactions()">
-                            <span class="caption-subject">Load more txs</span>
-                        </a>
-                    </div>
                     <div class="btn-group">
                         <a class="btn btn-med" ng-click="reloadTransactions()">
                             <i class="fa fa-refresh" ng-class="{'fa-spin': txLoading}"></i>
@@ -88,6 +85,13 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="portlet-bottom">
+                <div class="actions">
+                    <a class="btn btn-med" ng-click="loadMoreTransactions()">
+                        <span class="caption-subject">See more</span>
+                    </a>
                 </div>
             </div>
             <!-- END PORTLET-->

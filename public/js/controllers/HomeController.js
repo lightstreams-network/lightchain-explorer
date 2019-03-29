@@ -84,6 +84,7 @@ angular.module('BlocksApp')
 
         scope.stats.totalSupply = 300000000;
         scope.stats.totalTxs = null;
+        scope.stats.tps = 100;
 
         scope.refreshStats = function() {
           $http.post("/web3relay", { "action": "blockrate" })
@@ -94,8 +95,14 @@ angular.module('BlocksApp')
             });
           $http.post('/data', { "action": "total_txs" })
             .then(function(res) {
-              console.log('Txs counts', res.data);
               scope.stats.totalTxs = res.data.totalTxs;
+            }).catch(function(err) {
+            console.error(err);
+            scope.blockLoading = false;
+          });
+          $http.post('/data', { "action": "calculate_tps" })
+            .then(function(res) {
+              scope.stats.tps = res.data.tps;
             }).catch(function(err) {
             console.error(err);
             scope.blockLoading = false;

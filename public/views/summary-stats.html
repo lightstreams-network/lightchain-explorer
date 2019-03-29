@@ -6,11 +6,10 @@
                     <i class="fa fa-cube"></i>
                 </div>
                 <div class="number">
-                    <h4>
-                    <small>#</small>
-                        <span data-counter="counterup" data-value="stats.blockHeight">{{stats.blockHeight | number: 0 }}</span>
-                    </h4>
                     <small>Last block</small>
+                    <h4>
+                        <span data-counter="counterup" data-value="stats.blockHeight"># {{stats.blockHeight | number: 0 }}</span>
+                    </h4>
                 </div>
             </div>
         </div>
@@ -22,12 +21,12 @@
                     <i class="fa fa-diamond"></i>
                 </div>
                 <div class="number">
+                    <small>Total Supply (PHT)</small>
                     <h4>
                         <span data-counter="counterup" data-value="stats.validatorsrate">
                             {{stats.totalSupply | number: 0}}
                         </span>
                     </h4>
-                    <small>Total Supply (PHT)</small>
                 </div>
             </div>
         </div>
@@ -40,12 +39,12 @@
                 </div>
                 <div class="number">
                     <div class="item">
+                        <small>Total Transactions</small>
                         <h4>
                             <span data-counter="counterup" data-value="stats.blockTime">
                                 {{stats.totalTxs | number : 0}}
                             </span>
                         </h4>
-                        <small>Total Txs</small>
                     </div>
                 </div>
             </div>
@@ -59,12 +58,12 @@
                 </div>
                 <div class="number">
                     <div class="item">
+                        <small>Txs per second (tps)</small>
                         <h4>
                             <span data-counter="counterup" data-value="stats.blockTime">
-                                {{stats.totalTxs | number : 0}}
+                                {{stats.tps | number : 0}}
                             </span>
                         </h4>
-                        <small>TPS</small>
                     </div>
                 </div>
             </div>

@@ -314,4 +314,5 @@ const DATA_ACTIONS = {
   "latest_txs_counts": lastTxsCount,
   "total_txs": TotalTxsCount,
   "get_all_txs": GetAllTxs,
+  "calculate_tps": CalculateTPS,
 };

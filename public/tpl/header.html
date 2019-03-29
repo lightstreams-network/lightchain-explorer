@@ -1,81 +1,60 @@
 <!-- BEGIN HEADER TOP -->
 <div class="page-header-top">
     <div class="container">
-    <!-- BEGIN LOGO -->
-    <div class="page-logo">
-        <a href="/">
-            <img ng-show="settings.logo" src="{{settings.logo}}" alt="logo" class="logo-default" />
-        </a>
-    </div>
-        <div class="top-menu">
-            <ul class="nav navbar-nav pull-right">
-                <li class="dropdown">
-                    <form name="form.searchForm" class="search-form">
-                        <div class="input-group">
-                            <input type="text" name="explorerSearch" class="form-control" placeholder="Search by Address / Txhash / BlockNum / BlockHash" ng-model="form.searchInput" ng-keyup="$event.keyCode == 13 ? searchQuery(form.searchInput) : null">
-                            <span class="input-group-btn">
-                                <a class="btn" ng-click="searchQuery(form.searchInput)">
-                                    <i class="icon-magnifier"></i>
-                                </a>
-                            </span>
-                        </div>
-                    </form>
-                </li>
-            </ul>
+        <!-- BEGIN LOGO -->
+        <div class="div-left">
+            <div class="page-logo-default">
+                <a href="/">
+                    <img ng-show="settings.logo" src="{{settings.logo}}" alt="logo" class="logo-default"/>
+                </a>
+            </div>
         </div>
-    </div>
-</div>
-<div class="page-header-menu">
-    <div class="container">
-        <div class="hor-menu hor-menu-light">
-            <ul class="nav navbar-nav">
-                <li class="active">
-                    <a href="/">Home</a>
-                </li>
-                <li class="menu-dropdown mega-menu-dropdown ">
-                    <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#"
-                       class="dropdown-toggle"> Genesis
-                        <i class="fa fa-angle-down"></i>
+        <div class="div-center">
+            <form name="form.searchForm" class="search-form pull-left">
+                <div class="input-group">
+                    <input type="text" name="explorerSearch" class="form-control"
+                           placeholder="Search by Address / Txhash / BlockNum / BlockHash"
+                           ng-model="form.searchInput"
+                           ng-keyup="$event.keyCode == 13 ? searchQuery(form.searchInput) : null">
+                    <span class="input-group-btn">
+                    <a class="btn" ng-click="searchQuery(form.searchInput)">
+                        <i class="icon-magnifier"></i>
                     </a>
-                    <ul class="dropdown-menu" style="min-width: 450px">
-                        <li>
-                            <div class="mega-menu-content">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <ul ng-repeat="(acc_id, acc_add) in alloc_addresses" class="mega-menu-submenu">
-                                            <li>
-                                                <a href="/addr/{{acc_add}}" class="iconify">
-                                                    <i class="icon-wallet"></i> {{acc_id}}</a>
-                                            </li>
-                                        </ul>
+                </span>
+                </div>
+            </form>
+        </div>
+        <div class="div-right">
+            <div class="hor-menu hor-menu-light">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="/">Dashboard</a>
+                    </li>
+                    <li class="menu-dropdown mega-menu-dropdown">
+                        <a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#"
+                           class="dropdown-toggle"> Genesis
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="mega-menu-content">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <ul ng-repeat="(acc_id, acc_add) in alloc_addresses"
+                                                class="mega-menu-submenu">
+                                                <li>
+                                                    <a href="/addr/{{acc_add}}" class="iconify">
+                                                        <i class="icon-wallet"></i> {{acc_id}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <!--<li class="menu-dropdown mega-menu-dropdown ">-->
-                    <!--<a data-hover="megamenu-dropdown" data-close-others="true" data-toggle="dropdown" href="#" class="dropdown-toggle"> CoinFactory-->
-                        <!--<i class="fa fa-angle-down"></i>-->
-                    <!--</a>-->
-                    <!--<ul class="dropdown-menu" style="min-width: 410px">-->
-                        <!--<li>-->
-                            <!--<div class="mega-menu-content">-->
-                                <!--<div class="row">-->
-                                    <!--<div class="col-md-6">-->
-                                        <!--<ul ng-repeat="t in tokens" class="mega-menu-submenu">-->
-                                            <!--<li>-->
-                                                <!--<a href="/token/{{t.address}}" class="iconify">-->
-                                                    <!--<i class="icon-pin"></i> {{t.name}}</a>-->
-                                            <!--</li>-->
-                                        <!--</ul>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</li>-->
-                    <!--</ul>-->
-                <!--</li>-->
-            </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
