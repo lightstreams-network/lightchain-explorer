@@ -317,3 +317,26 @@ li.ng-scope {
 .portlet-bottom .actions .btn:hover {
     background-color: #e0ebf9;
 }
+
+small.hover {
+    cursor: pointer;
+}
+
+small .tooltiptext {
+    text-transform: none;
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+small:hover .tooltiptext {
+    visibility: visible;
+}

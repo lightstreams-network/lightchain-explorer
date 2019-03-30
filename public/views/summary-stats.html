@@ -56,7 +56,9 @@
                 </div>
                 <div class="number">
                     <div class="item">
-                        <small>Txs per second (tps)</small>
+                        <small class="hover">Txs per second (~200 tps)
+                            <span class="tooltiptext">Velocity calculated using recent transaction history data</span>
+                        </small>
                         <h4>
                             <span data-counter="counterup" data-value="stats.blockTime" ng-show="stats.tps">{{stats.tps | number : 0}}</span>
                             <span data-counter="counterup" data-value="stats.blockTime" ng-hide="stats.tps">{{ "-" }}</span>
