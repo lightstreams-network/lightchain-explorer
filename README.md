@@ -2,7 +2,7 @@
 
 This project was forked from [ETC Block Explorer Development](https://github.com/ethereumclassic/explorer).
 
-**Live Version**: [explorer.lightstreams.io](explorer.lightstreams.io)
+**Live Version**: [explorer.lightstreams.io](https://explorer.mainnet.lightstreams.io)
 
 ## Installation
 
