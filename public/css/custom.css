@@ -105,6 +105,52 @@
     }
 }
 
+@media (max-width: 487px) {
+    .container {
+        margin: 0 !important;
+    }
+
+    .page-header .page-header-top .menu-toggler {
+        margin: 33px 3px 0 0;
+    }
+}
+
+/***********************
+    PAGE HEAD
+ **********************/
+.page-head {
+    background-color: transparent !important;
+}
+
+.page-head .container {
+    padding-left: 35px;
+}
+
+.page-head .page-title > h1 {
+    color: black;
+    font-size: 20px;
+}
+
+.page-head .page-title .subtitle {
+    display: block;
+}
+
+.page-head .page-title .subtitle{
+    word-break: break-all;
+    display: block;
+}
+
+@media (max-width: 487px) {
+    .portlet > .portlet-title > .caption {
+        font-size: 16px;
+    }
+}
+
+
+/************************
+    SUMMARY STATS
+ *************************/
+
 li .medium {
     background: url(../img/social/medium.png)
 }
@@ -132,6 +178,127 @@ li .medium {
     color: #337ab7;
 }
 
+.dashboard-stat2 .display .number {
+    flex: 2 0;
+    order: 1;
+}
+
+.dashboard-stat2 .display .icon {
+    order: 2;
+}
+
+.dashboard-stat2 .display .number h4 {
+    margin: 0 0 2px;
+    padding: 0;
+    font-size: 28px;
+    font-weight: 400;
+}
+
+.dashboard-stat2 .display {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.dashboard-stat2 small.hover i {
+    cursor: pointer;
+}
+
+/*.dashboard-stat2 small .tooltiptext {*/
+    /*text-transform: none;*/
+    /*visibility: hidden;*/
+    /*width: 120px;*/
+    /*background-color: black;*/
+    /*color: #fff;*/
+    /*text-align: center;*/
+    /*border-radius: 6px;*/
+    /*padding: 5px 0;*/
+
+    /*!* Position the tooltip *!*/
+    /*position: absolute;*/
+    /*z-index: 1;*/
+/*}*/
+
+/*.dashboard-stat2 small:hover .tooltiptext {*/
+    /*visibility: visible;*/
+/*}*/
+
+/************************
+    HOMEPAGE LISTS
+ *************************/
+
+.portlet-bottom {
+    padding: 0;
+    min-height: 28px;
+    border-bottom: 1px solid #eee;
+}
+
+.portlet-bottom .actions {
+    width: 100%;
+    padding: 5px;
+}
+
+.portlet-bottom .actions .btn {
+    background-color: #f6fbfc;
+    color: #337ab7;
+    width: 100%;
+    border-radius: 5px;
+    border-top: #3faba4 0.5px solid;
+}
+
+.portlet-bottom .actions .btn:hover {
+    background-color: #e0ebf9;
+}
+
+.portlet {
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    border-radius: 4px;
+}
+
+/***********************
+    TABLE LS
+ **********************/
+
+table.table-ls {
+}
+
+table.table-ls tr > td:first-child {
+    background-color: #e0ebf9;
+}
+
+table.table-ls > tbody > tr > td {
+    border-top: 0;
+    height: 42px;
+    line-height: 20px;
+}
+
+@media (min-width: 487px) {
+    table.table-ls tr > td:first-child {
+        width: 180px;
+    }
+
+    table.table-ls > tbody > tr > td {
+        padding: 15px 10px 10px 30px;
+    }
+}
+
+@media (max-width: 487px) {
+    table.table-ls tr > td:first-child {
+        width: 130px;
+    }
+
+    table.table-ls > tbody > tr > td {
+        padding: 15px 10px 10px 10px;
+    }
+}
+
+/************************
+    OTHERS
+ ************************/
+
 .create{background-color:#36c6d3}
 .truncate-txhash, .truncate-addrhash{
     white-space:nowrap; 
@@ -147,6 +314,7 @@ li .medium {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
 #table_txs td, #table_internal_txs td {
     font-size: 12px;
     white-space:nowrap; 
@@ -170,19 +338,13 @@ li .medium {
     text-align: center;
 }
 .fade {opacity: 0.6}
-.portlet {
-    margin-top: 0;
-    margin-bottom: 25px;
-    padding: 0;
-    border-radius: 4px;
-}
-
 .home-tx{
     font-size: 12px;
     white-space:nowrap; 
     overflow:hidden;
     text-overflow: ellipsis;
 }
+
 .page-404 {text-align: center;}
 .page-404 .number {
     position: relative;
@@ -240,15 +402,6 @@ li.ng-scope {
     white-space: -o-pre-wrap; /* Opera 7 */
 }
 
-@media(max-width: 487px) {
-    .container {
-        margin: 0 !important;
-    }
-    .page-header .page-header-top .menu-toggler {
-        margin: 33px 3px 0 0;
-    }
-}
-
 ::-webkit-scrollbar {
     width: 4px;
     height: 6px;
@@ -270,73 +423,3 @@ li.ng-scope {
     background-color: transparent;
 }
 .page-spinner-bar{margin-top:-84px;margin-left:-98px;top:50%;left:50%;}
-
-
-.dashboard-stat2 .display {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-}
-
-.dashboard-stat2 .display .number{
-    flex: 2 0;
-    order: 1;
-}
-
-.dashboard-stat2 .display .icon {
-    order: 2;
-}
-
-.dashboard-stat2 .display .number h4 {
-    margin: 0 0 2px;
-    padding: 0;
-    font-size: 28px;
-    font-weight: 400;
-}
-
-.portlet-bottom {
-    padding: 0;
-    min-height: 28px;
-    border-bottom: 1px solid #eee;
-}
-
-.portlet-bottom .actions {
-    width: 100%;
-    padding: 5px;
-}
-
-.portlet-bottom .actions .btn {
-    background-color: #f6fbfc;
-    color: #337ab7;
-    width: 100%;
-    border-radius: 5px;
-    border-top: #3faba4 0.5px solid;
-}
-
-.portlet-bottom .actions .btn:hover {
-    background-color: #e0ebf9;
-}
-
-small.hover {
-    cursor: pointer;
-}
-
-small .tooltiptext {
-    text-transform: none;
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-small:hover .tooltiptext {
-    visibility: visible;
-}

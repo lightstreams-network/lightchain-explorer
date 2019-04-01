@@ -4,7 +4,9 @@ angular.module('BlocksApp').controller('TxController', function($stateParams, $r
         App.initAjax();
     });
 
-    $rootScope.$state.current.data["pageSubTitle"] = $stateParams.hash;
+    $rootScope.$state.current.data["pageTitle"] = "Transaction";
+    $rootScope.isHome = false;
+    // $rootScope.$state.current.data["pageSubTitle"] = $stateParams.hash;
     $scope.hash = $stateParams.hash;
     $scope.tx = {"hash": $scope.hash};
     $scope.settings = $rootScope.setup;

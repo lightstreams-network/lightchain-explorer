@@ -4,8 +4,9 @@ angular.module('BlocksApp').controller('AddressController', function($stateParam
       $scope.activeTab = activeTab[1];
 
     $rootScope.$state.current.data["pageSubTitle"] = $stateParams.hash;
+    $rootScope.isHome = true; // HACK to now show header @TODO
     $scope.addrHash = $stateParams.hash;
-    $scope.addr = {"balance": 0, "count": 0};
+    $scope.addr = {"balance": 0, "count": 0, "hash": $stateParams.hash};
     $scope.settings = $rootScope.setup;
 
     //fetch web3 stuff

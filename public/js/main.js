@@ -93,8 +93,10 @@ BlocksApp.controller('HeaderController', ['$scope', '$location', '$http', 'setup
 /* Search Bar */
 BlocksApp.controller('PageHeadController', ['$scope', 'setupObj', function($scope, setupObj) {
   $scope.$on('$includeContentLoaded', function() {
-
   });
+
+  $scope.$watch('current.data');
+
   setupObj.then(function(res) {
     $scope.settings = res;
   });

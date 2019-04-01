@@ -5,7 +5,8 @@ angular.module('BlocksApp').controller('BlockController', function($stateParams,
         //TableAjax.init();
     });
 
-    $rootScope.$state.current.data["pageSubTitle"] = $stateParams.number;
+    // $rootScope.$state.current.data["pageSubTitle"] = $stateParams.number;
+    $rootScope.isHome = false;
     $scope.blockNum = $stateParams.number;
     $scope.settings = $rootScope.setup;
 

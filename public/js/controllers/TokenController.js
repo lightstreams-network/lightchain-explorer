@@ -8,6 +8,7 @@ angular.module('BlocksApp').controller('TokenController', function($stateParams,
       $scope.activeTab = activeTab[1];
 
     $rootScope.$state.current.data["pageSubTitle"] = $stateParams.hash; //replace with token name
+    $rootScope.isHome = false;
     $scope.addrHash = isAddress($stateParams.hash) ? $stateParams.hash : undefined;
     var address = $scope.addrHash;
     $scope.token = {"balance": 0};

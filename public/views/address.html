@@ -1,26 +1,26 @@
 <!-- BEGIN PAGE CONTENT-->
-<div class="row">
+<div class="">
   <div class="col-md-12 portlet light">
       <div class="portlet-title">
-        <div class="caption"><span ng-show="addr.isContract">Contract </span>Overview</div>
+        <div class="caption">
+            <span ng-show="addr.isContract"><b>Contract </b></span>
+            <span ng-show="!addr.isContract"><b>Address </b> </span>
+            {{ addr.hash }}
+        </div>
       </div>
       <div class="portlet-body">
         <div class="row">
             <div class="col-md-6 center">
               <div >
-                <span class="eth-stat-title">
-                  {{ addr.balance | number: 3 }} </span><br>
-                <span class="eth-stat-text">
-                  {{ settings.symbol }} Balance <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="Note: Balance may not reflect transaction data if you have transactions resulting from Contract Internal Transactions. We are working on adding that functionality."></i>
-                  </span><br> 
-                  <div ng-if="settings.useEthFiat" class="margin-top-20">
-                  <span class="fade">{{ addr.ethfiat | number: 10 }}</span> <span class="eth-stat-text fade">ETH-F balance
-                  </span> <a href="http://etherscan.io/address/{{addrHash}}" target="_blank"><i class="fa fa-external-link"></i></a>
-                  </div>
-                  <div class="margin-top-20">
-                  {{ addr.count }} <span class="eth-stat-text">Transactions</span>
-                  </div>
+                <span class="eth-stat-title">{{ addr.balance | number: 3 }} </span><br>
+                <span class="eth-stat-text">{{ settings.symbol }} Balance</span><br>
               </div>
+            </div>
+            <div class="col-md-6 center">
+                <div>
+                    <span class="eth-stat-title">{{ addr.count | number: 0 }} </span><br>
+                    <span class="eth-stat-text">Transactions</span><br>
+                </div>
             </div>
       </div><!--end row-->
     </div><!--end portlet-body-->

@@ -57,7 +57,8 @@
                 <div class="number">
                     <div class="item">
                         <small class="hover">Txs per second (~200 tps)
-                            <span class="tooltiptext">Velocity calculated using recent transaction history data</span>
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                            title="Note: Velocity calculated using recent transaction history data. Lightstreams tx throughput is ~200 tps"></i>
                         </small>
                         <h4>
                             <span data-counter="counterup" data-value="stats.blockTime" ng-show="stats.tps">{{stats.tps | number : 0}}</span>

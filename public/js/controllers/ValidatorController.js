@@ -5,7 +5,8 @@ angular.module('BlocksApp')
       App.initAjax();
     });
 
-    $scope.address = $stateParams.address
+    $rootScope.isHome = false;
+    $scope.address = $stateParams.address;
     $scope.validator = {
       address: $scope.address
     };
