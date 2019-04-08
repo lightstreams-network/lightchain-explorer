@@ -31,7 +31,7 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     vesting: null
   };
 
-  $scope.verifyMMIsInstalled = function() {
+  $scope.verifyMMIsSetup = function() {
     if (typeof web3 !== 'undefined') {
       $scope.metamask.isInstalled = true;
       console.log('MetaMask is installed')
@@ -40,9 +40,7 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       $scope.metamask.isInstalled = false;
       console.log('MetaMask is not installed')
     }
-  };
 
-  $scope.verifyMMIsLocked = function() {
     web3.eth.getAccounts(function(err, accounts) {
       if (err != null) {
         $scope.errorMsg = err.message;
@@ -54,7 +52,11 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       }
       else {
         $scope.metamask.isUnlocked = true;
-        $scope.metamask.walletAddress = web3.currentProvider.selectedAddress;
+        if (web3.currentProvider.networkVersion !== $rootScope.setup.chainId) {
+          $scope.errorMsg = "Metamask connection is not compatible"
+        } else {
+          $scope.metamask.walletAddress = web3.currentProvider.selectedAddress;
+        }
         console.log('MetaMask is unlocked')
       }
     });
@@ -110,6 +112,4 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     })
   };
 
-  $scope.verifyMMIsInstalled();
-  $scope.verifyMMIsLocked();
 });

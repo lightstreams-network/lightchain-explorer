@@ -53,10 +53,12 @@ BlocksApp.controller('MainController', ['$scope', '$rootScope', function($scope,
  By default the partials are loaded through AngularJS ng-include directive.
  ***/
 /* Setup Layout Part - Header */
-BlocksApp.controller('HeaderController', ['$scope', '$location', '$http', 'setupObj', function($scope, $location, $http, setupObj) {
+BlocksApp.controller('HeaderController', ['$scope', '$rootScope', '$location', '$http', 'setupObj', function($scope, $rootScope, $location, $http, setupObj) {
   $scope.$on('$includeContentLoaded', function() {
     Layout.initHeader(); // init header
+    $scope.alloc_addresses = $rootScope.setup.genesisAllocation;
   });
+
   $scope.form = {};
   $scope.searchQuery = function(s) {
     var search = s.toLowerCase();
@@ -73,18 +75,11 @@ BlocksApp.controller('HeaderController', ['$scope', '$location', '$http', 'setup
     else
       $scope.form.searchInput = search;
   }
+
   setupObj.then(function(res) {
     $scope.settings = res;
   });
-  $http.get('/genesis.json')
-    .then(function(res) {
-      const genesis = res.data;
-      const addresses = Object.keys(genesis.alloc);
-      $scope.alloc_addresses = {
-        "Token Sale Account": addresses[0],
-        "Project Account": addresses[1]
-      };
-    });
+
   $http.get('/tokens.json')
     .then(function(res) {
       $scope.tokens = res.data;
