@@ -1,0 +1,59 @@
+<!-- BEGIN PAGE CONTENT-->
+<div class="row">
+    <div class="col-md-12 portlet light">
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-6 center">
+                    <span class="error-msg" ng-show="errorMsg">Error: {{ errorMsg }}</span>
+                    <span class="info-msg" ng-show="infoMsg">Info: {{ infoMsg }}</span>
+                </div>
+
+                <div class="col-md-6 center">
+                </div>
+
+            </div><!--end row-->
+
+        </div><!--end portlet-body-->
+    </div><!--end portlet-->
+
+    <div class="col-md-12">
+        <div class="col-md-12 center">
+            <span class="" ng-show="metamask.isInstalled"> Metamask plugging was found</span>
+            <div ng-hide="metamask.isInstalled">
+                <span>Metamask was not found. Please install plugin
+                    <a href="https://metamask.io">Install here</a>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-12 center">
+            <span class="" ng-show="metamask.isUnlocked"> MetaMask is unlocked</span>
+            <div ng-hide="metamask.isUnlocked">
+                <span>Please click over Metamask extension and unlock your Lightstreams account</span>
+            </div>
+        </div>
+        <div class="col-md-12 center" ng-show="metamask.isInstalled && metamask.isUnlocked">
+            <span> Metamask is correctly setup using Lightstreams wallet</span>
+            <ul>
+                <li> Wallet: {{ metamask.walletAddress}}</li>
+                <li> Balance: {{ metamask.balance}} PHT</li>
+            </ul>
+        </div>
+        <div class="col-md-12 center" ng-show="metamask.vesting">
+            <span> Congrats! Your account is vested with Lighstreams tokens </span>
+            <ul>
+                <li> Start: {{ metamask.vesting.startTimestamp | date:'dd-MM-yyyy HH:mm:ss Z'}}</li>
+                <li> End: {{ metamask.vesting.endTimestamp | date:'dd-MM-yyyy HH:mm:ss Z'}}</li>
+                <li> Lock Periods: {{ metamask.vesting.lockPeriod }} days</li>
+                <li> Vested tokens: {{ metamask.vesting.balanceInitial }} PHT</li>
+                <li> Claimed tokens: {{ metamask.vesting.balanceClaimed }} PHT</li>
+                <li> Remaining tokens: {{ metamask.vesting.balanceRemaining }} PHT</li>
+            </ul>
+        </div>
+        <div>
+            <button class="btn btn-info" ng-click="verifyMMIsLocked(); verifyMMIsInstalled(); getBalance()">Refresh MM</button>
+            <button class="btn btn-info" ng-click="fetchVesting()">Refresh Vesting</button>
+            <button class="btn btn-info" ng-click="withdraw()">Withdraw</button>
+        </div>
+
+    </div>
+</div>

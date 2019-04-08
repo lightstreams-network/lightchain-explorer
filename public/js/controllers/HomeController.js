@@ -17,7 +17,6 @@ angular.module('BlocksApp')
     // });
 
     var URL = '/data';
-
     $rootScope.isHome = true;
 
     $scope.loadMoreBlocks = function() {

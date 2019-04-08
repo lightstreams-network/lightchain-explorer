@@ -4,7 +4,7 @@ var BlocksApp = angular.module("BlocksApp", [
   "oc.lazyLoad",
   "ngSanitize"
 ]);
-BlocksApp.constant('_', window._); // loadsh
+BlocksApp.constant('_', window._);
 BlocksApp.config(['$ocLazyLoadProvider', '$locationProvider',
   function($ocLazyLoadProvider, $locationProvider) {
     $ocLazyLoadProvider.config({
@@ -277,6 +277,24 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
             insertBefore: '#ng_load_plugins_before',
             files: [
               '/js/controllers/TokenController.js'
+            ]
+          });
+        }]
+      }
+    })
+    .state('distribution', {
+      url: "/distribution",
+      templateUrl: "views/token_distribution.html",
+      data: { pageTitle: 'Token Distribution' },
+      controller: "TokenDistributionController",
+      resolve: {
+        deps: ['$ocLazyLoad', function($ocLazyLoad) {
+          return $ocLazyLoad.load({
+            name: 'BlocksApp',
+            insertBefore: '#ng_load_plugins_before',
+            files: [
+              '/js/controllers/TokenDistributionController.js',
+              '/js/abi/TokenDistribution.js'
             ]
           });
         }]
