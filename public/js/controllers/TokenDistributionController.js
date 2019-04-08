@@ -19,8 +19,10 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   const TokenDistributionContract = web3.eth.contract(TokenDistributionABI);
   const TokenDistribution = TokenDistributionContract.at(TokenDistributionAddress);
 
-  // $rootScope.$state.current.data["pageSubTitle"] = $stateParams.number;
-  $rootScope.isHome = false;
+  // $rootScope.$state.current.data["pageSubTitle"] = TokenDistributionAddress;
+  $rootScope.isHome = true;
+  $scope.tokenDistributionAddress = TokenDistributionAddress;
+  $scope.tokenSymbol = $rootScope.setup.symbol;
   $scope.errorMsg = "";
   $scope.infoMsg = "";
   $scope.metamask = {
@@ -85,12 +87,12 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         startTimestamp: parseInt(vesting[VestingProps.startTimestamp].toString()) * 1000,
         endTimestamp: parseInt(vesting[VestingProps.endTimestamp].toString()) * 1000,
         lockPeriod: parseInt(vesting[VestingProps.lockPeriod].toString()) / 86400,
-        balanceInitial: parseInt(wei2Pht(vesting[VestingProps.balanceInitial].toString())),
-        balanceClaimed: parseInt(wei2Pht(vesting[VestingProps.balanceClaimed].toString())),
-        balanceRemaining: parseInt(wei2Pht(vesting[VestingProps.balanceRemaining].toString())),
-        bonusInitial: parseInt(wei2Pht(vesting[VestingProps.bonusInitial].toString())),
-        bonusClaimed: parseInt(wei2Pht(vesting[VestingProps.bonusClaimed].toString())),
-        bonusRemaining: parseInt(wei2Pht(vesting[VestingProps.bonusRemaining].toString())),
+        balanceInitial: parseFloat(wei2Pht(vesting[VestingProps.balanceInitial].toString())),
+        balanceClaimed: parseFloat(wei2Pht(vesting[VestingProps.balanceClaimed].toString())),
+        balanceRemaining: parseFloat(wei2Pht(vesting[VestingProps.balanceRemaining].toString())),
+        bonusInitial: parseFloat(wei2Pht(vesting[VestingProps.bonusInitial].toString())),
+        bonusClaimed: parseFloat(wei2Pht(vesting[VestingProps.bonusClaimed].toString())),
+        bonusRemaining: parseFloat(wei2Pht(vesting[VestingProps.bonusRemaining].toString())),
         revocable: vesting[VestingProps.revocable],
         revoked: vesting[VestingProps.revoked]
       };

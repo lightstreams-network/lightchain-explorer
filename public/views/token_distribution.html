@@ -1,18 +1,35 @@
 <!-- BEGIN PAGE CONTENT-->
 <div class="row">
     <div class="col-md-12 portlet light">
+        <div class="portlet-title">
+            <div class="caption">
+                <span><b>Token Distribution</b></span>
+                <a href="/addr/{{tokenDistributionAddress}}">{{tokenDistributionAddress}}</a>
+            </div>
+        </div>
         <div class="portlet-body">
             <div class="row">
-                <div class="col-md-6 center">
+                <div class="col-md-12 center">
                     <span class="error-msg" ng-show="errorMsg">Error: {{ errorMsg }}</span>
+                </div>
+                <div class="col-md-12 center">
                     <span class="info-msg" ng-show="infoMsg">Info: {{ infoMsg }}</span>
                 </div>
-
-                <div class="col-md-6 center">
-                </div>
-
             </div><!--end row-->
-
+            <div class="row">
+                <div class="col-md-6 center">
+                    <div>
+                        <span class="eth-stat-title">MetaMask Wallet</span><br>
+                        <span class="eth-stat-text"><a href="/addr/{{metamask.walletAddress}}">{{metamask.walletAddress}}</a></span><br>
+                    </div>
+                </div>
+                <div class="col-md-6 center">
+                    <div>
+                        <span class="eth-stat-title">Balance</span><br>
+                        <span class="eth-stat-text">{{ metamask.balance | number: 3 }} {{ tokenSymbol }}</span><br>
+                    </div>
+                </div>
+            </div><!--end row-->
         </div><!--end portlet-body-->
     </div><!--end portlet-->
 
@@ -20,7 +37,7 @@
         <div class="col-md-12 center">
             <span class="" ng-show="metamask.isInstalled"> Metamask plugging was found</span>
             <div ng-hide="metamask.isInstalled">
-                <span>Metamask was not found. Please install plugin
+                <span>MetaMask was not found. Please install plugin
                     <a href="https://metamask.io">Install here</a>
                 </span>
             </div>
@@ -31,30 +48,62 @@
                 <span>Please click over Metamask extension and unlock your Lightstreams account</span>
             </div>
         </div>
-        <div class="col-md-12 center" ng-show="metamask.isInstalled && metamask.isUnlocked">
-            <span> Metamask is correctly setup using Lightstreams wallet</span>
-            <ul>
-                <li> Wallet: {{ metamask.walletAddress}}</li>
-                <li> Balance: {{ metamask.balance}} PHT</li>
-            </ul>
-        </div>
-        <div class="col-md-12 center" ng-show="metamask.vesting">
-            <span> Congrats! Your account is vested with Lighstreams tokens </span>
-            <ul>
-                <li> Start: {{ metamask.vesting.startTimestamp | date:'dd-MM-yyyy HH:mm:ss Z'}}</li>
-                <li> End: {{ metamask.vesting.endTimestamp | date:'dd-MM-yyyy HH:mm:ss Z'}}</li>
-                <li> Lock Periods: {{ metamask.vesting.lockPeriod }} days</li>
-                <li> Vested tokens: {{ metamask.vesting.balanceInitial }} PHT</li>
-                <li> Claimed tokens: {{ metamask.vesting.balanceClaimed }} PHT</li>
-                <li> Remaining tokens: {{ metamask.vesting.balanceRemaining }} PHT</li>
-            </ul>
-        </div>
-        <div>
-            <button class="btn btn-info" ng-click="verifyMMIsSetup();">Refresh MM</button>
-            <button class="btn btn-info" ng-click="getBalance()">Refresh Balance</button>
-            <button class="btn btn-info" ng-click="fetchVesting()">Refresh Vesting</button>
-            <button class="btn btn-info" ng-click="withdraw()">Withdraw</button>
-        </div>
-
     </div>
+
+    <div class="col-md-12">
+        <div class="portlet-body">
+            <h3> Token Vesting </h3>
+            <table class="col-md-6 table table-ls">
+                <tr>
+                    <td>Start at</td>
+                    <td>{{metamask.vesting.startTimestamp | date:'dd-MM-yyyy HH:mm:ss Z' }}</td>
+                </tr>
+                <tr>
+                    <td>Completed at</td>
+                    <td>{{metamask.vesting.startTimestamp | date:'dd-MM-yyyy HH:mm:ss Z' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lock Periods</td>
+                    <td>{{ metamask.vesting.lockPeriod }}</td>
+                </tr>
+                <tr>
+                    <td>Issued amount</td>
+                    <td>{{ metamask.vesting.balanceInitial | number: 3}}</td>
+                </tr>
+                <tr>
+                    <td>Vested amount</td>
+                    <td>{{ metamask.vesting.balanceClaimed | number: 3}}</td>
+                </tr>
+                <tr>
+                    <td>Pending amount</td>
+                    <td>{{ metamask.vesting.balanceRemaining | number: 3}}</td>
+                </tr>
+                <tr ng-show="metamask.vesting.bonusInitial > 0.0">
+                    <td>Issued bonus</td>
+                    <td>{{ metamask.vesting.bonusInitial | number: 3}}</td>
+                </tr>
+                <tr ng-show="metamask.vesting.bonusClaimed > 0.0">
+                    <td>Vested bonus</td>
+                    <td>{{ metamask.vesting.bonusClaimed | number: 3}}</td>
+                </tr>
+                <tr ng-show="metamask.vesting.bonusRemaining > 0.0">
+                    <td>Pending bonus</td>
+                    <td>{{ metamask.vesting.bonusRemaining | number: 3}}</td>
+                </tr>
+                <tr>
+                    <td>Next withdrawal available</td>
+                    <td>@TODO</td>
+                </tr>
+                <tr>
+                    <td>Actions</td>
+                    <td>
+                        <button class="btn btn-info" ng-click="verifyMMIsSetup();">Refresh MM</button>
+                        <button class="btn btn-info" ng-click="getBalance()">Refresh Balance</button>
+                        <button class="btn btn-info" ng-click="fetchVesting()">Refresh Vesting</button>
+                        <button class="btn btn-info" ng-click="withdraw()">Withdraw</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
 </div>
