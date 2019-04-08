@@ -234,7 +234,6 @@ var TotalTxsCount = function(lim, res) {
 
 var CalculateTPS = function(lim, res) {
   Transaction.find().lean(true).sort('-timestamp').limit(1000).exec(function(err, result) {
-    debugger;
     if (err) {
       console.error(err);
       res.write(JSON.stringify({
@@ -244,6 +243,14 @@ var CalculateTPS = function(lim, res) {
     }
 
     let tx = result.pop();
+    if (typeof tx === 'undefined') {
+      res.write(JSON.stringify({
+        "tps": 200,
+      }));
+      res.end();
+      return;
+    }
+
     let lastTs = tx.timestamp;
     let lastBlock = tx.blockNumber;
     let tps = 1;
