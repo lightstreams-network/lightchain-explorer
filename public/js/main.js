@@ -289,7 +289,7 @@ BlocksApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvide
             insertBefore: '#ng_load_plugins_before',
             files: [
               '/js/controllers/TokenDistributionController.js',
-              '/js/abi/TokenDistribution.js'
+              '/js/smartcontracts/TokenDistribution.js'
             ]
           });
         }]
