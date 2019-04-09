@@ -75,12 +75,12 @@
                     <td>{{ metamask.vesting.bonusRemaining | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr>
-                    <td>Next withdrawal available</td>
-                    <td>@TODO</td>
+                    <td>Withdrawal</td>
+                    <td>{{ metamask.vesting.withdrawable }} {{ tokenSymbol }}</td>
                 </tr>
                 <tr>
                     <td>Actions</td>
-                    <td>
+                    <td ng-show="metamask.vesting.withdrawable > 0.0">
                         <button class="btn btn-info" ng-click="withdraw()">Withdraw</button>
                     </td>
                 </tr>
