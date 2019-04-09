@@ -28,12 +28,12 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   $scope.metamask = {
     isInstalled: false,
     isUnlocked: false,
-    walletAddress: null,
+    walletAddress: "0x00000000000000000000000000000",
     balance: "0",
     vesting: null
   };
 
-  $scope.verifyMMIsSetup = function() {
+  const verifyMMIsInstalled = function() {
     if (typeof web3 !== 'undefined') {
       $scope.metamask.isInstalled = true;
       console.log('MetaMask is installed')
@@ -42,7 +42,9 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       $scope.metamask.isInstalled = false;
       console.log('MetaMask is not installed')
     }
+  };
 
+  const verifyMMIsUnlock = function(cb) {
     web3.eth.getAccounts(function(err, accounts) {
       if (err != null) {
         $scope.errorMsg = err.message;
@@ -53,18 +55,20 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         console.log('MetaMask is locked')
       }
       else {
-        $scope.metamask.isUnlocked = true;
         if (web3.currentProvider.networkVersion !== $rootScope.setup.chainId) {
           $scope.errorMsg = "Metamask connection is not compatible"
         } else {
-          $scope.metamask.walletAddress = web3.currentProvider.selectedAddress;
+          $scope.metamask.isUnlocked = true;
+          console.log('MetaMask is unlocked')
         }
-        console.log('MetaMask is unlocked')
       }
+
+      cb();
+      $scope.$apply();
     });
   };
 
-  $scope.getBalance = function() {
+  const updateBalance = function() {
     web3.eth.getBalance($scope.metamask.walletAddress, function(err, balance) {
       if (err != null) {
         $scope.errorMsg = err.message;
@@ -72,10 +76,11 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       } else {
         $scope.metamask.balance = wei2Pht(balance.toString());
       }
+      $scope.$apply();
     });
   };
 
-  $scope.fetchVesting = function() {
+  const fetchVesting = function() {
     TokenDistribution.vestings($scope.metamask.walletAddress, function(err, vesting) {
       if (err != null) {
         $scope.errorMsg = err.message;
@@ -96,6 +101,8 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         revocable: vesting[VestingProps.revocable],
         revoked: vesting[VestingProps.revoked]
       };
+
+      $scope.$apply();
     })
   };
 
@@ -115,4 +122,19 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     })
   };
 
+  $scope.refresh = function() {
+    verifyMMIsInstalled();
+    if ($scope.metamask.isInstalled) {
+      verifyMMIsUnlock(function() {
+        if ($scope.metamask.isUnlocked) {
+          $scope.metamask.walletAddress = web3.currentProvider.selectedAddress;
+          updateBalance();
+          fetchVesting();
+          $scope.$apply();
+        }
+      });
+    }
+  };
+
+  $scope.refresh();
 });

@@ -33,24 +33,7 @@
         </div><!--end portlet-body-->
     </div><!--end portlet-->
 
-    <div class="col-md-12">
-        <div class="col-md-12 center">
-            <span class="" ng-show="metamask.isInstalled"> Metamask plugging was found</span>
-            <div ng-hide="metamask.isInstalled">
-                <span>MetaMask was not found. Please install plugin
-                    <a href="https://metamask.io">Install here</a>
-                </span>
-            </div>
-        </div>
-        <div class="col-md-12 center">
-            <span class="" ng-show="metamask.isUnlocked"> MetaMask is unlocked</span>
-            <div ng-hide="metamask.isUnlocked">
-                <span>Please click over Metamask extension and unlock your Lightstreams account</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12">
+    <div class="col-md-12" ng-show="metamask.vesting">
         <div class="portlet-body">
             <h3> Token Vesting </h3>
             <table class="col-md-6 table table-ls">
@@ -65,31 +48,31 @@
                 </tr>
                 <tr>
                     <td>Lock Periods</td>
-                    <td>{{ metamask.vesting.lockPeriod }}</td>
+                    <td>{{ metamask.vesting.lockPeriod }} days</td>
                 </tr>
                 <tr>
                     <td>Issued amount</td>
-                    <td>{{ metamask.vesting.balanceInitial | number: 3}}</td>
+                    <td>{{ metamask.vesting.balanceInitial | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr>
                     <td>Vested amount</td>
-                    <td>{{ metamask.vesting.balanceClaimed | number: 3}}</td>
+                    <td>{{ metamask.vesting.balanceClaimed | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr>
                     <td>Pending amount</td>
-                    <td>{{ metamask.vesting.balanceRemaining | number: 3}}</td>
+                    <td>{{ metamask.vesting.balanceRemaining | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr ng-show="metamask.vesting.bonusInitial > 0.0">
                     <td>Issued bonus</td>
-                    <td>{{ metamask.vesting.bonusInitial | number: 3}}</td>
+                    <td>{{ metamask.vesting.bonusInitial | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr ng-show="metamask.vesting.bonusClaimed > 0.0">
                     <td>Vested bonus</td>
-                    <td>{{ metamask.vesting.bonusClaimed | number: 3}}</td>
+                    <td>{{ metamask.vesting.bonusClaimed | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr ng-show="metamask.vesting.bonusRemaining > 0.0">
                     <td>Pending bonus</td>
-                    <td>{{ metamask.vesting.bonusRemaining | number: 3}}</td>
+                    <td>{{ metamask.vesting.bonusRemaining | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr>
                     <td>Next withdrawal available</td>
@@ -98,12 +81,13 @@
                 <tr>
                     <td>Actions</td>
                     <td>
-                        <button class="btn btn-info" ng-click="verifyMMIsSetup();">Refresh MM</button>
-                        <button class="btn btn-info" ng-click="getBalance()">Refresh Balance</button>
-                        <button class="btn btn-info" ng-click="fetchVesting()">Refresh Vesting</button>
                         <button class="btn btn-info" ng-click="withdraw()">Withdraw</button>
                     </td>
                 </tr>
             </table>
         </div>
+    </div>
+    <div class="col-md-12">
+        <button class="btn btn-info" ng-click="refresh();">Refresh</button>
+    </div>
 </div>

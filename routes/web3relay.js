@@ -11,11 +11,8 @@ var etherUnits = require(__lib + "etherUnits.js");
 var filterBlocks = require('./filters').filterBlocks;
 var filterTrace = require('./filters').filterTrace;
 
-var Web3 = require('../lib/web3');
-var web3;
-
 exports.data = function(req, res) {
-  web3 = Web3();
+  const web3 = require('../lib/web3')();
   if (!web3.isConnected())
     throw "No connection, please specify web3host in conf.json";
 
@@ -60,6 +57,7 @@ exports.data = function(req, res) {
 };
 
 var web3getTx = function({ txHash }, res) {
+  const web3 = require('../lib/web3')();
   web3.eth.getTransaction(txHash, function(err, tx) {
     if (err || !tx) {
       console.error("TxWeb3 error :" + err)
@@ -94,6 +92,7 @@ var web3getTx = function({ txHash }, res) {
 }
 
 var web3getTxTrace = function({ txHash }, res) {
+  const web3 = require('../lib/web3')();
   if (_.isUndefined(web3.trace)) {
     res.write(JSON.stringify({ "error": true }));
     res.end();
@@ -111,9 +110,34 @@ var web3getTxTrace = function({ txHash }, res) {
   });
 };
 
+var web3getAddrDebugTrace = function({ addr }, res) {
+  const web3 = require('../lib/web3')();
+  if (_.isUndefined(web3.debug)) {
+    res.write(JSON.stringify({ "DebugWeb3 error :": "Not Loaded" }));
+    res.end();
+    return;
+  }
+
+  // need to filter both to and from
+  // from block to end block, paging "toAddress":[addr],
+  // start from creation block to speed things up
+  // TODO: store creation block
+  var params = [addr, {}];
+  web3.debug.traceTransaction(params, function(err, tx) {
+    if (err || !tx) {
+      console.error("TraceWeb3 error :" + err);
+      res.write(JSON.stringify({ "error": true }));
+    } else {
+      res.write(JSON.stringify(filterTrace(tx)));
+    }
+    res.end();
+  })
+};
+
 var web3getAddrTrace = function({ addr }, res) {
+  const web3 = require('../lib/web3')();
   if (_.isUndefined(web3.trace)) {
-    res.write(JSON.stringify({ "error": true }));
+    res.write(JSON.stringify({ "TraceWeb3 error :": "Not Loaded" }));
     res.end();
     return;
   }
@@ -135,6 +159,7 @@ var web3getAddrTrace = function({ addr }, res) {
 };
 
 var web3getAddr = function({ addr, options }, res) {
+  const web3 = require('../lib/web3')();
   var addrData = {};
 
   if (options.indexOf("balance") > -1) {
@@ -172,6 +197,7 @@ var web3getAddr = function({ addr, options }, res) {
 }
 
 var web3getBlock = function({ blockNumOrHash }, res) {
+  const web3 = require('../lib/web3')();
   web3.eth.getBlock(blockNumOrHash, function(err, block) {
     if (err || !block) {
       console.error("BlockWeb3 error :" + err)
@@ -184,6 +210,7 @@ var web3getBlock = function({ blockNumOrHash }, res) {
 }
 
 var web3getBlockrate = function({}, res) {
+  const web3 = require('../lib/web3')();
   web3.eth.getBlock('latest', function(err, latest) {
     if (err || !latest) {
       console.error("StatsWeb3 error :" + err);
