@@ -531,6 +531,10 @@ const TokenDistributionABI = [
       {
         "name": "_beneficiary",
         "type": "address"
+      },
+      {
+        "name": "_bonus",
+        "type": "uint256"
       }
     ],
     "name": "schedulePublicSaleVesting",
@@ -538,7 +542,7 @@ const TokenDistributionABI = [
     "payable": true,
     "stateMutability": "payable",
     "type": "function",
-    "signature": "0x44c0dd16"
+    "signature": "0x44af46ca"
   },
   {
     "constant": true,

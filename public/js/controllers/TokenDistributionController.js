@@ -13,12 +13,12 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   $scope.tokenSymbol = $rootScope.setup.symbol;
   $scope.errorMsg = "";
   $scope.infoMsg = "";
+  $scope.vesting = null;
   $scope.metamask = {
     isInstalled: false,
     isUnlocked: false,
     walletAddress: "0x00000000000000000000000000000",
-    balance: "0",
-    vesting: null
+    balance: "0"
   };
 
   const wei2pht = function(wei) {
@@ -80,7 +80,32 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       return 0;
     }
 
-    return vesting.balanceRemaining + vesting.bonusRemaining;
+    const oneDayInMs = 86400 * 1000;
+    let withdrawableBalance = 0;
+    let withdrawableBonus = 0;
+
+    // const now = (new Date()).getTime() + (oneDayInMs * 30 * 1);
+    const now = (new Date()).getTime();
+    const vestingPeriodInMs = vesting.endTimestamp - vesting.startTimestamp;
+    const vestedTimeInMs = now - vesting.startTimestamp;
+    const lockPeriodInMs = vesting.lockPeriod * oneDayInMs;
+    const lockPeriods = parseInt(vestingPeriodInMs / lockPeriodInMs) + 1;
+    const curPeriod = parseInt(vestedTimeInMs / lockPeriodInMs) + 1;
+
+    const vestedAmountPerPeriod = (vesting.balanceInitial / lockPeriods);
+    withdrawableBalance = vestedAmountPerPeriod*curPeriod - vesting.balanceClaimed;
+    if (withdrawableBalance > vesting.balanceRemaining) {
+      withdrawableBalance = vesting.balanceRemaining
+    }
+
+    if (curPeriod > lockPeriods && vesting.bonusInitial > 0) {
+      withdrawableBonus = vestedAmountPerPeriod * (curPeriod-lockPeriods);
+      if (withdrawableBonus > vesting.bonusRemaining) {
+        withdrawableBonus = vesting.bonusRemaining;
+      }
+    }
+
+    return withdrawableBalance + withdrawableBonus;
   };
 
   const fetchVesting = function() {
@@ -95,19 +120,19 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         startTimestamp: parseInt(vesting[VestingProps.startTimestamp].toString()) * 1000,
         endTimestamp: parseInt(vesting[VestingProps.endTimestamp].toString()) * 1000,
         lockPeriod: parseInt(vesting[VestingProps.lockPeriod].toString()) / 86400,
-        balanceInitial: parseFloat(wei2Pht(vesting[VestingProps.balanceInitial].toString())),
-        balanceClaimed: parseFloat(wei2Pht(vesting[VestingProps.balanceClaimed].toString())),
-        balanceRemaining: parseFloat(wei2Pht(vesting[VestingProps.balanceRemaining].toString())),
-        bonusInitial: parseFloat(wei2Pht(vesting[VestingProps.bonusInitial].toString())),
-        bonusClaimed: parseFloat(wei2Pht(vesting[VestingProps.bonusClaimed].toString())),
-        bonusRemaining: parseFloat(wei2Pht(vesting[VestingProps.bonusRemaining].toString())),
+        balanceInitial: parseFloat(wei2pht(vesting[VestingProps.balanceInitial].toString())),
+        balanceClaimed: parseFloat(wei2pht(vesting[VestingProps.balanceClaimed].toString())),
+        balanceRemaining: parseFloat(wei2pht(vesting[VestingProps.balanceRemaining].toString())),
+        bonusInitial: parseFloat(wei2pht(vesting[VestingProps.bonusInitial].toString())),
+        bonusClaimed: parseFloat(wei2pht(vesting[VestingProps.bonusClaimed].toString())),
+        bonusRemaining: parseFloat(wei2pht(vesting[VestingProps.bonusRemaining].toString())),
         withdrawable: 0,
         revocable: vesting[VestingProps.revocable],
         revoked: vesting[VestingProps.revoked]
       };
 
       fetchVesting.withdrawable = calculateWithdrawable(fetchVesting);
-      $scope.metamask.vesting = fetchVesting;
+      $scope.vesting = fetchVesting;
       $scope.$apply();
     })
   };
@@ -123,7 +148,7 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       } else{
         console.log(result);
         $scope.infoMsg = "Withdrawn vested token correctly";
-        $scope.getBalance();
+        updateBalance();
       }
     })
   };

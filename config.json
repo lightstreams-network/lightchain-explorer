@@ -31,7 +31,7 @@
             "Genesis Account": "0x61f3b85929c20980176d4a09771284625685c40e",
             "Test Account": "0xd119b8b038d3a67d34ca1d46e1898881626a082b"
         },
-        "tokenDistributionAddress": "0x0D53ad46A37A99b60240a08C5493aB5C83C2d70F",
+        "tokenDistributionAddress": "0xe2E4d49f002B8427eb50236D246599a80b58Febc",
         "chainId": "162",
         "informative_message": "Our Blockchain Network and this Explorer are under a very active development. Therefore displayed data might contains some inconsistencies or unreliable information. We are working hard to achieve a prompt stable version. Thanks for joining us !"
     }
