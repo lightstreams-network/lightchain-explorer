@@ -26,7 +26,18 @@ angular.module('BlocksApp').controller('TxController', function($stateParams, $r
         $location.path("/err404/tx/" + $scope.hash);
         return;
       }
+
       $scope.tx = resp.data;
+      const txCost = BigInt(resp.data.gasPrice) * BigInt(resp.data.gas);
+      $http({
+        method: 'POST',
+        url: '/web3relay',
+        data: { "web3utils": "toPht", "value": txCost.toString() }
+      }).then(function(resp) {
+        $scope.tx.cost = resp.data;
+        $scope.$apply();
+      });
+
       if (resp.data.timestamp)
         $scope.tx.datetime = new Date(resp.data.timestamp*1000); 
       if (resp.data.isTrace) // Get internal txs

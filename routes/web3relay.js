@@ -41,10 +41,23 @@ exports.data = function(req, res) {
       blockNumOrHash = parseInt(req.body.block);
     }
     web3getBlock({ blockNumOrHash }, res);
+  } else if ("web3utils" in req.body) {
+    if (req.body.web3utils === 'toPht') {
+      const result = etherUnits.toEther(req.body.value, 'wei');
+      res.write(result);
+      res.end();
+    } else if (req.body.web3utils === 'toWei') {
+      const result = etherUnits.toWei(req.body.value);
+      res.write(result);
+      res.end();
+    } else {
+      console.error("Invalid Request: " + action);
+      res.status(400).send();
+    }
   } else if ("action" in req.body) {
     if (req.body.action === 'blockrate') {
       web3getBlockrate({}, res)
-    } else if (req.body.action === 'blockrate') {
+    } else if (req.body.action === 'get_txs') {
       web3getTxs({}, res)
     } else {
       console.error("Invalid Request: " + action)

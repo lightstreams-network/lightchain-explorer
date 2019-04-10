@@ -12,7 +12,6 @@ const VestingProps = {
   revoked: 10
 };
 
-const TokenDistributionAddress = "0x0D53ad46A37A99b60240a08C5493aB5C83C2d70F";
 
 const TokenDistributionABI = [
   {

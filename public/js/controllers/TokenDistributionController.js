@@ -1,27 +1,15 @@
-function wei2Pht(wei) {
-  return web3.fromWei(wei, 'ether');
-}
-
-function pht2Wei(pht) {
-  return web3.toBigNumber(web3.toWei(pht.toString(), 'ether'));
-}
-
-function toBN(value) {
-  return web3.toBigNumber(value);
-}
-
-angular.module('BlocksApp').controller('TokenDistributionController', function($stateParams, $rootScope, $scope, $http, $location) {
+angular.module('BlocksApp').controller('TokenDistributionController', function($stateParams, $rootScope, $scope, $http) {
   $scope.$on('$viewContentLoaded', function() {
     // initialize core components
     App.initAjax();
   });
 
   const TokenDistributionContract = web3.eth.contract(TokenDistributionABI);
-  const TokenDistribution = TokenDistributionContract.at(TokenDistributionAddress);
+  const TokenDistribution = TokenDistributionContract.at($rootScope.setup.tokenDistributionAddress);
 
   // $rootScope.$state.current.data["pageSubTitle"] = TokenDistributionAddress;
   $rootScope.isHome = true;
-  $scope.tokenDistributionAddress = TokenDistributionAddress;
+  $scope.tokenDistributionAddress = $rootScope.setup.tokenDistributionAddress;
   $scope.tokenSymbol = $rootScope.setup.symbol;
   $scope.errorMsg = "";
   $scope.infoMsg = "";
@@ -31,6 +19,13 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     walletAddress: "0x00000000000000000000000000000",
     balance: "0",
     vesting: null
+  };
+
+  const wei2pht = function(wei) {
+    if (typeof web3 !== 'undefined') {
+      return web3.fromWei(wei, 'ether');
+    }
+    console.error("Web3 is not loaded")
   };
 
   const verifyMMIsInstalled = function() {
@@ -74,7 +69,7 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         $scope.errorMsg = err.message;
         console.log(err)
       } else {
-        $scope.metamask.balance = wei2Pht(balance.toString());
+        $scope.metamask.balance = wei2pht(balance.toString());
       }
       $scope.$apply();
     });
