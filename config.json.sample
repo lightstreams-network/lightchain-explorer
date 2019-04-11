@@ -25,13 +25,10 @@
         "customCss": "blue-gray.css",
         "copyright": "2018 &copy; All Rights Reserved - Lightstreams Network OÜ. Registered in Estonia.",
         "validators": {
-            "0x2DE3B810E4EAC51A10A3740D15AE92142B01DC7B": "sirius-node-1"
          },
         "genesisAllocation": {
-            "Genesis Account": "0x61f3b85929c20980176d4a09771284625685c40e",
-            "Test Account": "0xd119b8b038d3a67d34ca1d46e1898881626a082b"
         },
-        "tokenDistributionAddress": "0xe2E4d49f002B8427eb50236D246599a80b58Febc",
-        "chainId": "162"
+        "tokenDistributionAddress": "",
+        "chainId": "160"
     }
 }

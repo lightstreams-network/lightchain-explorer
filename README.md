@@ -55,8 +55,12 @@ npm install
 
 ### Configure explorer
 
-The setup configuration is stored at `.config.json`.
-Edit its content to match your local requirements:
+Create a config setting file using sample version
+```
+mv config.json.sample config.json
+```
+
+The setup configuration is stored at `config.json`. Edit its content to match your local requirements:
 ```json
 {
     "nodeAddr":     "localhost",
