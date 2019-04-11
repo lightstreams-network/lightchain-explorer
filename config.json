@@ -32,7 +32,6 @@
             "Test Account": "0xd119b8b038d3a67d34ca1d46e1898881626a082b"
         },
         "tokenDistributionAddress": "0xe2E4d49f002B8427eb50236D246599a80b58Febc",
-        "chainId": "162",
-        "informative_message": "Our Blockchain Network and this Explorer are under a very active development. Therefore displayed data might contains some inconsistencies or unreliable information. We are working hard to achieve a prompt stable version. Thanks for joining us !"
+        "chainId": "162"
     }
 }

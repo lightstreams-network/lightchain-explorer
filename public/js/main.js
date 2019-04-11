@@ -57,6 +57,7 @@ BlocksApp.controller('HeaderController', ['$scope', '$rootScope', '$location', '
   $scope.$on('$includeContentLoaded', function() {
     Layout.initHeader(); // init header
     $scope.alloc_addresses = $rootScope.setup.genesisAllocation;
+    $scope.showDistribution = $rootScope.setup.tokenDistributionAddress ? true : false;
   });
 
   $scope.form = {};
