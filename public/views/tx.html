@@ -21,10 +21,16 @@
           <tr ng-show="tx.creates"><td >creates</td>
                 <td><a href="/addr/{{tx.creates}}">{{tx.creates}}</a></td></tr>                
           <tr ><td >Value</td><td>{{tx.value}} {{ settings.symbol }}</td></tr>
-          <tr ><td >Gas Provided</td><td>{{tx.gas | number}}</td></tr>
+          <tr ><td >Gas Limit</td><td>{{tx.gasLimit | number}}</td></tr>
+          <tr ><td >Gas Used</td><td>{{tx.gasUsed | number}}</td></tr>
           <tr ><td >Tx Cost</td><td>{{tx.cost | number}} {{ settings.symbol }}</td></tr>
           <tr ><td >Nonce</td><td>{{tx.nonce}}</td></tr>
-          <tr ><td >Input Data</td><td><pre class="code">{{tx.input}}</pre></td></tr>
+          <tr ><td >Status</td><td>
+              <span ng-show="tx.status">{{tx.status == '0x1' ? 'Success' : 'Failed'}}</span>
+          </td></tr>
+          <tr ><td >Input Data</td><td>
+              <pre class="code" ng-show="tx.input">{{tx.input}}</pre>
+          </td></tr>
         </table>
 
         <table class="table table-condensed" ng-show="tx.isTrace">

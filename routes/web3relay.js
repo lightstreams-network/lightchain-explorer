@@ -42,18 +42,20 @@ exports.data = function(req, res) {
     }
     web3getBlock({ blockNumOrHash }, res);
   } else if ("web3utils" in req.body) {
+    let result;
     if (req.body.web3utils === 'toPht') {
-      const result = etherUnits.toEther(req.body.value, 'wei');
-      res.write(result);
-      res.end();
+      result = web3.fromWei(req.body.value, 'ether');
     } else if (req.body.web3utils === 'toWei') {
-      const result = etherUnits.toWei(req.body.value);
-      res.write(result);
-      res.end();
+      result = web3.toWei(req.body.value, 'ether');
+    } else if (req.body.web3utils === 'toAscii') {
+      result = web3.toAscii(req.body.value);
     } else {
       console.error("Invalid Request: " + action);
       res.status(400).send();
     }
+
+    res.write(result);
+    res.end();
   } else if ("action" in req.body) {
     if (req.body.action === 'blockrate') {
       web3getBlockrate({}, res)
@@ -92,13 +94,26 @@ var web3getTx = function({ txHash }, res) {
     } else {
       var ttx = tx;
       ttx.value = etherUnits.toEther(new BigNumber(tx.value), "wei");
+      ttx.gasLimit = tx.gas;
       //get timestamp from block
-      var block = web3.eth.getBlock(tx.blockNumber, function(err, block) {
-        if (!err && block)
+      web3.eth.getBlock(tx.blockNumber, function(err, block) {
+        if (!err && block) {
           ttx.timestamp = block.timestamp;
-        ttx.isTrace = (ttx.input != "0x");
-        res.write(JSON.stringify(ttx));
-        res.end();
+          ttx.isTrace = (ttx.input != "0x");
+        } else {
+          console.error(err);
+        }
+        web3.eth.getTransactionReceipt(tx.hash, function(err, receipt) {
+          if(!err) {
+            ttx.status = receipt.status;
+            ttx.gasUsed = receipt.gasUsed;
+            ttx.cost = etherUnits.toEther(tx.gasPrice.mul(new BigNumber(receipt.gasUsed), 10), "wei");
+          } else {
+            console.error(err);
+          }
+          res.write(JSON.stringify(ttx));
+          res.end();
+        });
       });
     }
   });
