@@ -422,10 +422,46 @@ li.ng-scope {
 ::-webkit-scrollbar-track {
     background-color: transparent;
 }
-.page-spinner-bar{margin-top:-84px;margin-left:-98px;top:50%;left:50%;}
+.page-spinner-bar{
+    margin-top:-100px;
+    margin-left:-45px;
+    top:50%;
+    left:50%;
+}
+
+.portlet-body .notification {
+    margin-bottom: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.portlet-body .notification > div {
+    min-height: 55px;
+    padding: 15px;
+    text-align: center;
+}
+
+.portlet-body .notification > div > span {
+    word-break: break-all;
+}
+
+
+.portlet-body .notification .error{
+    border-color: #af4149;
+    border-radius: 5px !important;
+    background-color: #e7505a;
+    color: white;
+}
+
+.portlet-body .notification .info {
+    border-color: #e0ebf9;
+    border-radius: 5px !important;
+    background-color: #e0ebf9;
+    color: black;
+}
 
 @media (max-width: 487px) {
     .portlet-title .caption .addr {
-        font-size: 14px;
+        font-size: 15px;
     }
 }

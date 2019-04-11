@@ -34,6 +34,8 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       console.log('MetaMask is installed')
     }
     else {
+      $scope.errorMsg = "MetaMask extension was not detected. Please install MetaMask following " +
+        "<a href='https://metamask.io/'>official instructions</a>";
       $scope.metamask.isInstalled = false;
       console.log('MetaMask is not installed')
     }
@@ -46,12 +48,14 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         console.log(err)
       }
       else if (accounts.length === 0) {
+        $scope.errorMsg = "MetaMask extension was detected but it seems to be locked. Please unlock it to continue.";
         $scope.metamask.isUnlocked = false;
         console.log('MetaMask is locked')
       }
       else {
         if (web3.currentProvider.networkVersion !== $rootScope.setup.chainId) {
-          $scope.errorMsg = "Metamask connection is not compatible"
+          $scope.errorMsg = "MetaMask selected network is not corresponding to Lightstreams blockchain. Please configure your" +
+            " extension to use Lightstreams."
         } else {
           $scope.metamask.isUnlocked = true;
           console.log('MetaMask is unlocked')
@@ -88,6 +92,10 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     const now = (new Date()).getTime();
     const vestingPeriodInMs = vesting.endTimestamp - vesting.startTimestamp;
     const vestedTimeInMs = now - vesting.startTimestamp;
+    if (vesting.lockPeriod === 0) {
+      return vesting.bonusRemaining + vesting.balanceRemaining;
+    }
+
     const lockPeriodInMs = vesting.lockPeriod * oneDayInMs;
     const lockPeriods = parseInt(vestingPeriodInMs / lockPeriodInMs) + 1;
     const curPeriod = parseInt(vestedTimeInMs / lockPeriodInMs) + 1;
@@ -140,20 +148,24 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   $scope.withdraw = function() {
     TokenDistribution.withdraw($scope.metamask.walletAddress, {
       from: $scope.metamask.walletAddress,
-      gasPrice: 500000000000,
+      gasPrice: "500000000000",
     }, function(err, result) {
       if (err != null) {
         $scope.errorMsg = err.message;
         console.log(err);
-      } else{
+        $scope.$apply();
+      } else {
+        debugger;
         console.log(result);
-        $scope.infoMsg = "Withdrawn vested token correctly";
+        $scope.infoMsg = "Withdrawn processed correctly <a href='/tx/"+result+"'>"+result+"</a>";
         updateBalance();
       }
     })
   };
 
   $scope.refresh = function() {
+    $scope.errorMsg = "";
+    $scope.infoMsg = "";
     verifyMMIsInstalled();
     if ($scope.metamask.isInstalled) {
       verifyMMIsUnlock(function() {

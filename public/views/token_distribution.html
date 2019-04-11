@@ -1,5 +1,5 @@
 <!-- BEGIN PAGE CONTENT-->
-<div class="row">
+<div class="">
     <div class="col-md-12 portlet light">
         <div class="portlet-title">
             <div class="caption">
@@ -8,37 +8,39 @@
             </div>
         </div>
         <div class="portlet-body">
-            <div class="row">
-                <div class="col-md-12 center">
-                    <span class="error-msg" ng-show="errorMsg">Error: {{ errorMsg }}</span>
+            <div class="notification row">
+                <div class="col-md-12 center error" ng-show="errorMsg">
+                    <span ng-bind-html="errorMsg"></span>
                 </div>
-                <div class="col-md-12 center">
-                    <span class="info-msg" ng-show="infoMsg">Info: {{ infoMsg }}</span>
+                <div class="col-md-12 center info" ng-show="infoMsg">
+                    <span ng-bind-html="infoMsg"></span>
                 </div>
             </div><!--end row-->
-            <div class="col-md-6 center">
-                <div>
-                    <span class="eth-stat-title">MetaMask Wallet</span>
-                    <a class="btn btn-med" ng-click="refresh()">
-                        <i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
-                    </a>
-                    <br>
-                    <span class="eth-stat-text"><a href="/addr/{{metamask.walletAddress}}">{{metamask.walletAddress}}</a></span><br>
+            <div class="row">
+                <div class="col-md-6 center">
+                    <div>
+                        <span class="eth-stat-title">MetaMask Wallet</span>
+                        <a class="btn btn-med" ng-click="refresh()">
+                            <i class="fa fa-refresh" ng-class="{'fa-spin': blockLoading}"></i>
+                        </a>
+                        <br>
+                        <span class="eth-stat-text"><a href="/addr/{{metamask.walletAddress}}">{{metamask.walletAddress}}</a></span><br>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 center">
-                <div>
-                    <span class="eth-stat-title">Balance</span>
-                    <br>
-                    <span class="eth-stat-text">{{ metamask.balance | number: 3 }} {{ tokenSymbol }}</span><br>
+                <div class="col-md-6 center">
+                    <div>
+                        <span class="eth-stat-title">Balance</span>
+                        <br>
+                        <span class="eth-stat-text">{{ metamask.balance | number: 3 }} {{ tokenSymbol }}</span><br>
+                    </div>
                 </div>
             </div>
         </div><!--end portlet-body-->
     </div><!--end portlet-->
 
-    <div class="col-md-12" ng-show="vesting && vesting.startTimestamp > 0">
+    <div class="col-md-12 row" ng-show="vesting && vesting.startTimestamp > 0">
         <div class="portlet-body">
-            <h3> Token Vesting </h3>
+            <h3> Token Vesting Schedule </h3>
             <table class="col-md-6 table table-ls">
                 <tr>
                     <td>Start at</td>
@@ -78,13 +80,11 @@
                     <td>{{ vesting.bonusRemaining | number: 3}} {{ tokenSymbol }}</td>
                 </tr>
                 <tr>
-                    <td>Withdrawal</td>
-                    <td>{{ vesting.withdrawable | number: 3 }} {{ tokenSymbol }}</td>
-                </tr>
-                <tr>
-                    <td>Actions</td>
+                    <td>ATM</td>
                     <td>
-                        <button class="btn btn-info" ng-click="withdraw()" ng-disabled="vesting.withdrawable < 1">Withdraw</button>
+                        <button class="btn btn-info" ng-click="withdraw()" ng-disabled="vesting.withdrawable < 0.1">
+                            Withdraw {{ vesting.withdrawable | number: 2 }} {{ tokenSymbol }}
+                        </button>
                     </td>
                 </tr>
             </table>
