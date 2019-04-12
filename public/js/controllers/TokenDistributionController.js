@@ -159,6 +159,7 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         console.log(result);
         $scope.infoMsg = "Withdrawn processed correctly <a href='/tx/"+result+"'>"+result+"</a>";
         updateBalance();
+        fetchVesting();
       }
     })
   };
