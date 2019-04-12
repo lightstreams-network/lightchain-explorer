@@ -18,7 +18,8 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     isInstalled: false,
     isUnlocked: false,
     walletAddress: "0x00000000000000000000000000000",
-    balance: "0"
+    balance: "0",
+    permissionRequest: false,
   };
 
   const wei2pht = function(wei) {
@@ -46,13 +47,24 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
       if (err != null) {
         $scope.errorMsg = err.message;
         console.log(err)
-      }
-      else if (accounts.length === 0) {
-        $scope.errorMsg = "MetaMask extension was detected but it seems to be locked. Please unlock it to continue.";
-        $scope.metamask.isUnlocked = false;
-        console.log('MetaMask is locked')
-      }
-      else {
+      } else if (accounts.length === 0) {
+        if (window.ethereum && !$scope.metamask.permissionRequest) {
+          $scope.metamask.permissionRequest = true;
+          window.web3 = new Web3(ethereum);
+          // Request account access if needed
+          ethereum.enable()
+            .then(function() {
+              verifyMMIsUnlock(cb);
+            }).catch(function() {
+            $scope.errorMsg = error.message;
+            console.error(error);
+          });
+        } else {
+          $scope.errorMsg = "MetaMask extension was detected but it seems to be locked. Please unlock it to continue.";
+          $scope.metamask.isUnlocked = false;
+          console.log('MetaMask is locked')
+        }
+      } else {
         if (web3.currentProvider.networkVersion !== $rootScope.setup.chainId) {
           $scope.errorMsg = "MetaMask selected network is not corresponding to Lightstreams blockchain. Please configure your" +
             " extension to use Lightstreams."
@@ -80,7 +92,7 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   };
 
   const calculateWithdrawable = function(vesting) {
-    if(vesting.revoked) {
+    if (vesting.revoked) {
       return 0;
     }
 
@@ -101,13 +113,13 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     const curPeriod = parseInt(vestedTimeInMs / lockPeriodInMs) + 1;
 
     const vestedAmountPerPeriod = (vesting.balanceInitial / lockPeriods);
-    withdrawableBalance = vestedAmountPerPeriod*curPeriod - vesting.balanceClaimed;
+    withdrawableBalance = vestedAmountPerPeriod * curPeriod - vesting.balanceClaimed;
     if (withdrawableBalance > vesting.balanceRemaining) {
       withdrawableBalance = vesting.balanceRemaining
     }
 
     if (curPeriod > lockPeriods && vesting.bonusInitial > 0) {
-      withdrawableBonus = vestedAmountPerPeriod * (curPeriod-lockPeriods);
+      withdrawableBonus = vestedAmountPerPeriod * (curPeriod - lockPeriods);
       if (withdrawableBonus > vesting.bonusRemaining) {
         withdrawableBonus = vesting.bonusRemaining;
       }
@@ -155,9 +167,8 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
         console.log(err);
         $scope.$apply();
       } else {
-        debugger;
         console.log(result);
-        $scope.infoMsg = "Withdrawn processed correctly <a href='/tx/"+result+"'>"+result+"</a>";
+        $scope.infoMsg = "Withdrawn processed correctly <a href='/tx/" + result + "'>" + result + "</a>";
         updateBalance();
         fetchVesting();
       }

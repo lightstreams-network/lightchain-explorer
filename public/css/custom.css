@@ -465,3 +465,10 @@ li.ng-scope {
         font-size: 15px;
     }
 }
+
+@media (max-width: 992px) {
+    .container {
+        width: auto;
+    }
+}
+
