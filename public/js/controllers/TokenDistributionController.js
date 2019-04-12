@@ -32,45 +32,42 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   const verifyMMIsInstalled = function() {
     if (typeof web3 !== 'undefined') {
       $scope.metamask.isInstalled = true;
-      console.log('MetaMask is installed')
     }
     else {
       $scope.errorMsg = "MetaMask extension was not detected. Please install MetaMask following " +
         "<a href='https://metamask.io/'>official instructions</a>";
       $scope.metamask.isInstalled = false;
-      console.log('MetaMask is not installed')
+      console.error('MetaMask is not installed')
     }
   };
 
   const verifyMMIsUnlock = function(cb) {
+    if (window.ethereum && !$scope.metamask.permissionRequest) {
+      ethereum.enable().then(function(addr) {
+        console.log("Address " + addr + " was successfully loaded.");
+        $scope.metamask.permissionRequest = true;
+        verifyMMIsUnlock(cb);
+      }).catch(function(error) {
+        $scope.metamask.permissionRequest = true;
+        $scope.errorMsg = error.message;
+        console.error(error);
+      });
+      return;
+    }
+
     web3.eth.getAccounts(function(err, accounts) {
       if (err != null) {
         $scope.errorMsg = err.message;
         console.log(err)
       } else if (accounts.length === 0) {
-        if (window.ethereum && !$scope.metamask.permissionRequest) {
-          $scope.metamask.permissionRequest = true;
-          window.web3 = new Web3(ethereum);
-          // Request account access if needed
-          ethereum.enable()
-            .then(function() {
-              verifyMMIsUnlock(cb);
-            }).catch(function() {
-            $scope.errorMsg = error.message;
-            console.error(error);
-          });
-        } else {
           $scope.errorMsg = "MetaMask extension was detected but it seems to be locked. Please unlock it to continue.";
           $scope.metamask.isUnlocked = false;
-          console.log('MetaMask is locked')
-        }
       } else {
         if (web3.currentProvider.networkVersion !== $rootScope.setup.chainId) {
           $scope.errorMsg = "MetaMask selected network is not corresponding to Lightstreams blockchain. Please configure your" +
             " extension to use Lightstreams."
         } else {
           $scope.metamask.isUnlocked = true;
-          console.log('MetaMask is unlocked')
         }
       }
 
