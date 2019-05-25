@@ -4,9 +4,6 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
     App.initAjax();
   });
 
-  const TokenDistributionContract = web3.eth.contract(TokenDistributionABI);
-  const TokenDistribution = TokenDistributionContract.at($rootScope.setup.tokenDistributionAddress);
-
   // $rootScope.$state.current.data["pageSubTitle"] = TokenDistributionAddress;
   $rootScope.isHome = true;
   $scope.tokenDistributionAddress = $rootScope.setup.tokenDistributionAddress;
@@ -126,6 +123,8 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   };
 
   const fetchVesting = function() {
+    const TokenDistributionContract = web3.eth.contract(TokenDistributionABI);
+    const TokenDistribution = TokenDistributionContract.at($scope.tokenDistributionAddress);
     TokenDistribution.vestings($scope.metamask.walletAddress, function(err, vesting) {
       if (err != null) {
         $scope.errorMsg = err.message;
@@ -155,6 +154,8 @@ angular.module('BlocksApp').controller('TokenDistributionController', function($
   };
 
   $scope.withdraw = function() {
+    const TokenDistributionContract = web3.eth.contract(TokenDistributionABI);
+    const TokenDistribution = TokenDistributionContract.at($scope.tokenDistributionAddress);
     TokenDistribution.withdraw($scope.metamask.walletAddress, {
       from: $scope.metamask.walletAddress,
       gasPrice: "500000000000",
