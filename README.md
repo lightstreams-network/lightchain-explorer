@@ -11,19 +11,15 @@ This project was forked from [ETC Block Explorer Development](https://github.com
 
 - [Nodejs and npm](https://docs.npmjs.com/getting-started/installing-node)
 - [Mongo-db](https://docs.mongodb.com/v3.2/installation/)
+- [Lightchain](https://github.com/lightstreams-network/lightchain)
 
-PHT PRICE
-### Install Lightchain
-In order to run the entire tech stack of the blockchain explorer
-we would need to run a `lightchain` node locally.
+#### Lightchain
 
+**Installation**
 To install lightchain you can follow the instructions written at the
 [lightchain repository](https://github.com/lightstreams-network/lightchain).
 
-***Precompiled***
-
-You also can download the precompiled version as follow:
-
+Also Lightstreams team provides **precompiled** binaries for macOd and Linux amd64:
 == macOS ==
 ```
 wget "https://s3.eu-central-1.amazonaws.com/lightstreams-public/lightchain/lightchain-osx" -O /usr/local/bin/lightchain
@@ -34,26 +30,38 @@ wget "https://s3.eu-central-1.amazonaws.com/lightstreams-public/lightchain/light
 wget "https://s3.eu-central-1.amazonaws.com/lightstreams-public/lightchain/lightchain-linux-amd64" -O /usr/local/bin/lightchain
 ```
 
-In case you download the precompiled version you also need to set the right permissions
-to the executables:
+**Run Lightchain node**
+
+In order to run a local explorer we need a local `lightchain` node running
+locally first. Firstly, and ONLY IF YOU DIDN'T DO IT BEFORE, we need to
+initialize the lightchain data directory:
 ```
-chmod u+x /usr/local/bin/lightchain
+lightchain init --datadir=${HOME}/.lightchain
 ```
 
-### Install Explorer
+Once we have the lightchain node initialize we run the synchronization of the
+node, enabling the rpc API as follow:
+```
+lightchain run --datadir=${HOME}/.lightchain --rpc --rpcapi admin,db,eth,net,shh,txpool,personal,web3
+```
 
-**Clone Repository**
+The synchronization might take several minutes, but you can continuous to next step.
+If you want to see more option regarding every possible option of
+lightchain visit our [cli docs](https://docs.lightstreams.network/cli-docs/lightchain/)
+
+
+### How to use it
+
+Clone Repository
 ```
 git clone https://github.com/lightstreams-network/lightchain-explorer
 ```
 
-**Install dependencies**
+Install dependencies
 
 ```
 npm install
 ```
-
-### Configure explorer
 
 Create a config setting file using sample version
 ```
@@ -79,37 +87,16 @@ The setup configuration is stored at `config.json`. Edit its content to match yo
 
 The most relevant properties are the next ones:
 
-* ```nodeAddr```    Your node API RPC address.
-* ```gethPort```    Your node API RPC port.
+* ```nodeAddr```    Your node API RPC address. It runs part of `lightchain node` and it listens on interface `localhost`.
+* ```gethPort```    Your node API RPC port. It runs as part of `lightchain node` and it listens on port `8545`.
+* ```tendermintAddr``` Your Tendermint API RPC. It runs as part of `lightchain node` and it listens on `127.0.0.1:26657`.
+
 * ```startBlock```  This is the start block of the blockchain, should always be 0 if you want to sync the whole ETC blockchain.
 * ```endBlock```    This is usually the 'latest'/'newest' block in the blockchain, this value gets updated automatically, and will be used to patch missing blocks if the whole app goes down.
 * ```quiet```       Suppress some messages. (admittedly still not quiet)
 * ```syncAll```     If this is set to true at the start of the app, the sync will start syncing all blocks from lastSync, and if lastSync is 0 it will start from whatever the endBlock or latest block in the blockchain is.
 * ```patch```       If set to true and below value is set, sync will iterated through the # of blocks specified.
 * ```patchBlocks``` If `patch` is set to true, the amount of block specified will be check from the latest one.
-
-
-### Running Explorer
-
-#### Lightchain node
-In order to run a local explorer we need a local `lightchain` node running
-locally first. Firstly, and ONLY IF YOU DIDN'T DO IT BEFORE, we need to
-initialize the lightchain data directory:
-```
-lightchain init --datadir=${HOME}/.lightchain
-```
-
-Once we have the lightchain node initialize we run the synchronization of the
-node, enabling the rpc API as follow:
-```
-lightchain run --datadir=${HOME}/.lightchain --rpc --rpcapi admin,db,eth,net,shh,txpool,personal,web3
-```
-
-The synchronization might take several minutes, but you can continuous to next step.
-If you want to see more option regarding every possible option of
-lightchain visit our [cli docs](https://docs.lightstreams.network/cli-docs/lightchain/)
-
-#### Explorer service
 
 Explorer service is split into two sub-services, one for populating the local
 mongodb database with the information fetch from the local lightchain node, and
