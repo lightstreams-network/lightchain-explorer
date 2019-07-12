@@ -56,8 +56,13 @@ BlocksApp.controller('MainController', ['$scope', '$rootScope', function($scope,
 BlocksApp.controller('HeaderController', ['$scope', '$rootScope', '$location', '$http', 'setupObj', function($scope, $rootScope, $location, $http, setupObj) {
   $scope.$on('$includeContentLoaded', function() {
     Layout.initHeader(); // init header
-    $scope.alloc_addresses = $rootScope.setup.genesisAllocation;
-    $scope.showDistribution = $rootScope.setup.tokenDistributionAddress ? true : false;
+  });
+
+  $rootScope.$watch('setup', function(newValue) {
+    if(typeof newValue !== 'undefined'){
+      $scope.alloc_addresses = newValue.genesisAllocation;
+      $scope.showDistribution = newValue.tokenDistributionAddress;
+    }
   });
 
   $scope.form = {};

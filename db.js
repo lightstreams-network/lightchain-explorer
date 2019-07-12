@@ -119,5 +119,4 @@ module.exports.Connect = () => {
   });
 };
 
-console.log("HERE");
 // mongoose.set('debug', true);
