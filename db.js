@@ -1,10 +1,12 @@
-var mongoose = require( 'mongoose' );
-var Schema   = mongoose.Schema;
-var DBName  = 'blockDB';
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var DBName = 'blockDB';
+
+var { waitFor } = require('./lib/utils');
 
 var Block = new Schema(
-{
-    "number": {type: Number, index: {unique: true}},
+  {
+    "number": { type: Number, index: { unique: true } },
     "hash": String,
     "parentHash": String,
     "nonce": String,
@@ -23,19 +25,19 @@ var Block = new Schema(
     "timestamp": Number,
     "blockTime": Number,
     "validators": [String]
-});
+  });
 
 var Account = new Schema(
-{
-    "address": {type: String, index: {unique: true}},
+  {
+    "address": { type: String, index: { unique: true } },
     "balance": Number,
     "blockNumber": Number,
-    "type": {type: Number, default: 0} // address: 0x0, contract: 0x1
-});
+    "type": { type: Number, default: 0 } // address: 0x0, contract: 0x1
+  });
 
 var Contract = new Schema(
-{
-    "address": {type: String, index: {unique: true}},
+  {
+    "address": { type: String, index: { unique: true } },
     "creationTransaction": String,
     "contractName": String,
     "compilerVersion": String,
@@ -43,11 +45,11 @@ var Contract = new Schema(
     "sourceCode": String,
     "abi": String,
     "byteCode": String
-}, {collection: "Contract"});
+  }, { collection: "Contract" });
 
 var Transaction = new Schema(
-{
-    "hash": {type: String, index: {unique: true}},
+  {
+    "hash": { type: String, index: { unique: true } },
     "nonce": Number,
     "blockHash": String,
     "blockNumber": Number,
@@ -59,11 +61,11 @@ var Transaction = new Schema(
     "gasPrice": String,
     "timestamp": Number,
     "input": String
-}, {collection: "Transaction"});
+  }, { collection: "Transaction" });
 
 var BlockStat = new Schema(
-{
-    "number": {type: Number, index: {unique: true}},
+  {
+    "number": { type: Number, index: { unique: true } },
     "timestamp": Number,
     "difficulty": String,
     "hashrate": String,
@@ -73,17 +75,17 @@ var BlockStat = new Schema(
     "miner": String,
     "blockTime": Number,
     "uncleCount": Number
-});
+  });
 
 // create indices
-Transaction.index({blockNumber:-1});
-Transaction.index({from:1, blockNumber:-1});
-Transaction.index({to:1, blockNumber:-1});
-Account.index({balance:-1});
-Account.index({balance:-1, blockNumber:-1});
-Account.index({type:-1, balance:-1});
-Block.index({miner:1});
-Block.index({miner:1, blockNumber:-1});
+Transaction.index({ blockNumber: -1 });
+Transaction.index({ from: 1, blockNumber: -1 });
+Transaction.index({ to: 1, blockNumber: -1 });
+Account.index({ balance: -1 });
+Account.index({ balance: -1, blockNumber: -1 });
+Account.index({ type: -1, balance: -1 });
+Block.index({ miner: 1 });
+Block.index({ miner: 1, blockNumber: -1 });
 
 mongoose.model('BlockStat', BlockStat);
 mongoose.model('Block', Block);
@@ -97,6 +99,25 @@ module.exports.Transaction = mongoose.model('Transaction');
 module.exports.Account = mongoose.model('Account');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGO_URI || `mongodb://localhost/${DBName}`, { useNewUrlParser: true });
 
+mongoose.set('useNewUrlParser', true);
+
+module.exports.Connect = () => {
+  return new Promise((resolve) => {
+    mongoUri = process.env.MONGO_URI || `mongodb://localhost/${DBName}`;
+    mongoose.connect(mongoUri, async (err) => {
+      if (err) {
+        console.error(`Cannot connect to mongodb ${mongoUri}. Retrying in 1s...`);
+        await waitFor(1);
+        await this.Connect();
+      }
+
+      console.log(`Connected correctly to mongodb ${mongoUri}`);
+      resolve();
+    });
+
+  });
+};
+
+console.log("HERE");
 // mongoose.set('debug', true);

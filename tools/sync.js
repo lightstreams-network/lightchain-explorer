@@ -4,7 +4,7 @@ Version: .0.0.2
 This file will start syncing the blockchain from the node address you provide in the conf.json file.
 Please read the README in the root directory that explains the parameters of this code
 */
-require('../db.js');
+var { Connect: ConnectToMongodb } = require('../db.js');
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
 var _ = require('lodash');
@@ -13,6 +13,8 @@ var { waitFor, asyncForEach } = require('../lib/utils');
 var async = require('async');
 
 var mongoose = require('mongoose');
+
+ConnectToMongodb();
 var Block = mongoose.model('Block');
 var Transaction = mongoose.model('Transaction');
 var Account = mongoose.model('Account');
