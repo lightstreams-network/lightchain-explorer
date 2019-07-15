@@ -2,7 +2,6 @@
   Stuff to deal with verified contracts in DB 
 */
 
-require( '../db.js' );
 var mongoose = require( 'mongoose' );
 var Contract     = mongoose.model( 'Contract' );
 

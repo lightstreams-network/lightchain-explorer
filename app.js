@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-require( './db' );
+var { Connect: ConnectToMongodb } = require('./db.js');
+ConnectToMongodb();
 
 var express = require('express');
 var path = require('path');

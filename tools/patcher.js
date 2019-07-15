@@ -1,4 +1,3 @@
-require( '../db.js' );
 var etherUnits = require("../lib/etherUnits.js");
 var BigNumber = require('bignumber.js');
 var { waitFor } = require('../lib/utils');
