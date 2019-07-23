@@ -18,6 +18,13 @@ module.exports = function(app) {
     { "tx": "0x1234blah" }
     { "block": "1234" }
   */
+  app.get('/token/circulating_supply', (req, res) => {
+    res.send("48408133");
+  });
+  app.get('/token/total_supply', (req, res) => {
+    res.send("300000000");
+  });
+
   app.post('/addr', getAddr);
   app.post('/addr_count', getAddrCounter);
   app.post('/tx', getTx);

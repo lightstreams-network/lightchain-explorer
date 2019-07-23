@@ -12,16 +12,6 @@ module.exports = function(req, res) {
   else
     throw "No connection, please specify web3host in conf.json";
 
-  // PHT info
-  if (!("action" in req.body)) {
-    res.write(JSON.stringify({
-      'total_supply': 300000000,
-      'circulating_supply': 48408133
-    }));
-    res.end();
-    return;
-  }
-
   if (typeof req.body.address === 'undefined') {
     res.status(400).send();
     return;
