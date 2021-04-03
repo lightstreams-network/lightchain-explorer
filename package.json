@@ -13,6 +13,7 @@
     "test": "mocha --exit"
   },
   "dependencies": {
+    "@metamask/legacy-web3": "^2.0.0",
     "bignumber.js": "^5.0.0",
     "body-parser": "^1.12.2",
     "concurrently": "^3.5.1",
