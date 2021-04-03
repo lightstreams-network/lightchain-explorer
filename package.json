@@ -1,8 +1,8 @@
 {
-  "name": "LightchainExplorer",
+  "name": "LightstreamsExplorer",
   "private": false,
   "version": "0.3.0",
-  "description": "A lightweight lightchain block explorer",
+  "description": "A lightweight lightstreams block explorer",
   "repository": "https://github.com/lightstreams-network/explorer",
   "license": "MIT",
   "scripts": {
